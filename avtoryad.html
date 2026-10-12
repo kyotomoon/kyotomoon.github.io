@@ -54,6 +54,46 @@ a{color:#C2410C}a:hover{color:#9A3412}
 .ph{background-color:#E4E0D6;background-image:repeating-linear-gradient(135deg,rgba(21,23,26,.05) 0 2px,transparent 2px 14px)}
 </style></head>
 <body>
+<!-- kt-transition: шторка портфолио Kyotomoon -->
+<style id="kt-style">
+#kt-cur{position:fixed;left:0;right:0;top:-40vh;bottom:-40vh;z-index:2147483646;background:#D4FF3A;display:none;align-items:flex-end;padding:0 clamp(20px,4vw,56px) calc(40vh + clamp(20px,4vw,56px));pointer-events:none;will-change:transform}
+#kt-cur span{font:800 clamp(36px,7vw,96px)/.95 "Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.04em;color:#111}
+#kt-cur i{position:absolute;top:calc(40vh + clamp(20px,4vw,56px));left:clamp(20px,4vw,56px);font:500 13px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:#111}
+@media (pointer:coarse){#kt-cur{padding-bottom:calc(40vh + 110px + env(safe-area-inset-bottom))}#kt-cur i{top:calc(40vh + 90px + env(safe-area-inset-top))}}
+#kt-back{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));z-index:2147483645;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;min-width:40px;padding:0 16px 0 14px;border-radius:999px;background:#111;color:#ECEAE4;font:500 13px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;text-decoration:none;box-shadow:0 0 0 2px #D4FF3A,0 6px 20px rgba(0,0,0,.3);transition:transform .25s,opacity .25s}
+#kt-back svg{width:16px;height:16px;flex:none}
+#kt-back:hover{transform:translateY(-2px)}
+#kt-back:focus-visible{outline:2px solid #D4FF3A;outline-offset:4px}
+#kt-back.kt-hide{transform:translateY(80px);opacity:0;pointer-events:none}
+@media (max-width:700px),(pointer:coarse){#kt-back{padding:0;width:40px}#kt-back span{display:none}}
+</style>
+<div id="kt-cur" aria-hidden="true"><i></i><span></span></div>
+<a id="kt-back" href="/" aria-label="Вернуться в портфолио"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg><span>Портфолио</span></a>
+<script>
+(function(){
+  var cur=document.getElementById('kt-cur'),back=document.getElementById('kt-back');
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t=null;try{t=sessionStorage.getItem('kt-wipe');sessionStorage.removeItem('kt-wipe')}catch(e){}
+  if(t&&!still&&cur.animate){
+    cur.querySelector('span').textContent=t;cur.querySelector('i').textContent='Открываю';cur.style.display='flex';
+    var go=function(){cur.animate([{transform:'translateY(0)'},{transform:'translateY(-100%)'}],{duration:700,easing:'cubic-bezier(.7,0,.2,1)',fill:'forwards'}).onfinish=function(){cur.style.display='none'}};
+    if(document.readyState==='complete')setTimeout(go,150);else addEventListener('load',function(){setTimeout(go,150)});
+    setTimeout(go,2500);
+  }
+  var y=scrollY;addEventListener('scroll',function(){var n=scrollY;back.classList.toggle('kt-hide',n>y&&n>120);y=n},{passive:true});
+  back.addEventListener('click',function(e){
+    if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||still||!cur.animate)return;
+    e.preventDefault();if(cur.style.display==='flex')return;
+    var href=back.getAttribute('href');try{sessionStorage.setItem('kt-wipe','Портфолио')}catch(e){}
+    cur.querySelector('span').textContent='Портфолио';cur.querySelector('i').textContent='Возвращаюсь';cur.style.display='flex';
+    cur.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],{duration:560,easing:'cubic-bezier(.7,0,.2,1)',fill:'forwards'}).onfinish=function(){setTimeout(function(){location.href=href},120)};
+    setTimeout(function(){location.href=href},1200);
+  });
+  addEventListener('pageshow',function(e){if(e.persisted){cur.style.display='none';cur.getAnimations&&cur.getAnimations().forEach(function(a){a.cancel()})}});
+})();
+</script>
+<!-- /kt-transition -->
+
 <div id="dc-root"><div class="sc-host" data-sc-name="Main"><div data-dc-tpl="4" style="width: 1440px; height: 2640px; box-sizing: border-box; display: flex; flex-direction: column; background: rgb(243, 241, 236); font-family: Manrope, system-ui, sans-serif; color: rgb(21, 23, 26);"><header data-dc-tpl="5" style="height: 88px; box-sizing: border-box; padding: 0px 80px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgb(221, 216, 205);"><div data-dc-tpl="6" style="display: flex; align-items: center; gap: 56px;"><div data-dc-tpl="7" style="font-family: Unbounded, sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.5px;">АВТОРЯД<span data-dc-tpl="8" style="color: rgb(194, 65, 12);">.</span></div><nav data-dc-tpl="9" style="display: flex; gap: 32px; font-size: 15px; font-weight: 600;"><a data-dc-tpl="10" href="#catalog" style="color: rgb(21, 23, 26); text-decoration: none;">Каталог</a><a data-dc-tpl="11" href="#catalog" style="color: rgb(21, 23, 26); text-decoration: none;">С пробегом</a><a data-dc-tpl="12" href="#sell" style="color: rgb(21, 23, 26); text-decoration: none;">Трейд-ин</a><a data-dc-tpl="13" href="#why" style="color: rgb(21, 23, 26); text-decoration: none;">Кредит</a><a data-dc-tpl="14" href="#footer" style="color: rgb(21, 23, 26); text-decoration: none;">Контакты</a></nav></div><div data-dc-tpl="15" style="display: flex; align-items: center; gap: 24px;"><div data-dc-tpl="16" style="font-size: 15px; font-weight: 700;">[ТЕЛЕФОН]</div><button data-dc-tpl="17" type="button" style="height: 44px; padding: 0px 22px; border-radius: 22px; border: 1px solid rgb(21, 23, 26); background: transparent; font-family: inherit; font-size: 15px; font-weight: 600; color: rgb(21, 23, 26); cursor: pointer;">Войти</button></div></header><section data-dc-tpl="18" style="padding: 64px 80px 72px; display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 48px; align-items: center;"><div data-dc-tpl="19" style="display: flex; flex-direction: column; gap: 32px;"><div data-dc-tpl="20" style="display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 20px; background: rgb(255, 255, 255); border: 1px solid rgb(221, 216, 205); font-size: 13px; font-weight: 600;"><span data-dc-tpl="21" style="width: 8px; height: 8px; border-radius: 4px; background: rgb(194, 65, 12);"></span>Автомобили с пробегом и новые
 </div><h1 data-dc-tpl="22" style="margin: 0px; font-family: Unbounded, sans-serif; font-weight: 700; font-size: 64px; line-height: 1.02; letter-spacing: -2px;">Машина, которую уже проверили за вас</h1><p data-dc-tpl="23" style="margin: 0px; font-size: 19px; line-height: 1.55; color: rgb(80, 84, 91); max-width: 520px;">Каждый автомобиль проходит техническую и юридическую проверку до публикации. Цена фиксирована — без торга и скрытых доплат.</p><form data-dc-tpl="24" style="display: grid; grid-template-columns: repeat(4, minmax(0px, 1fr)); gap: 12px; padding: 16px; background: rgb(255, 255, 255); border-radius: 20px; border: 1px solid rgb(221, 216, 205);"><label data-dc-tpl="25" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: rgb(80, 84, 91);">Марка
 <select data-dc-tpl="26" style="height: 44px; border-radius: 10px; border: 1px solid rgb(214, 209, 197); background: rgb(248, 247, 243); padding: 0px 10px; font-family: inherit; font-size: 15px; color: rgb(21, 23, 26);"><option data-dc-tpl="27">Любая</option><option data-dc-tpl="28">Toyota</option><option data-dc-tpl="29">Kia</option><option data-dc-tpl="30">Haval</option></select></label><label data-dc-tpl="31" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: rgb(80, 84, 91);">Модель

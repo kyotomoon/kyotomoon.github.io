@@ -226,6 +226,46 @@
         </script>
     </head>
     <body>
+<!-- kt-transition: шторка портфолио Kyotomoon -->
+<style id="kt-style">
+#kt-cur{position:fixed;left:0;right:0;top:-40vh;bottom:-40vh;z-index:2147483646;background:#D4FF3A;display:none;align-items:flex-end;padding:0 clamp(20px,4vw,56px) calc(40vh + clamp(20px,4vw,56px));pointer-events:none;will-change:transform}
+#kt-cur span{font:800 clamp(36px,7vw,96px)/.95 "Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.04em;color:#111}
+#kt-cur i{position:absolute;top:calc(40vh + clamp(20px,4vw,56px));left:clamp(20px,4vw,56px);font:500 13px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:#111}
+@media (pointer:coarse){#kt-cur{padding-bottom:calc(40vh + 110px + env(safe-area-inset-bottom))}#kt-cur i{top:calc(40vh + 90px + env(safe-area-inset-top))}}
+#kt-back{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));z-index:2147483645;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;min-width:40px;padding:0 16px 0 14px;border-radius:999px;background:#111;color:#ECEAE4;font:500 13px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;text-decoration:none;box-shadow:0 0 0 2px #D4FF3A,0 6px 20px rgba(0,0,0,.3);transition:transform .25s,opacity .25s}
+#kt-back svg{width:16px;height:16px;flex:none}
+#kt-back:hover{transform:translateY(-2px)}
+#kt-back:focus-visible{outline:2px solid #D4FF3A;outline-offset:4px}
+#kt-back.kt-hide{transform:translateY(80px);opacity:0;pointer-events:none}
+@media (max-width:700px),(pointer:coarse){#kt-back{padding:0;width:40px}#kt-back span{display:none}}
+</style>
+<div id="kt-cur" aria-hidden="true"><i></i><span></span></div>
+<a id="kt-back" href="/" aria-label="Вернуться в портфолио"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg><span>Портфолио</span></a>
+<script>
+(function(){
+  var cur=document.getElementById('kt-cur'),back=document.getElementById('kt-back');
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t=null;try{t=sessionStorage.getItem('kt-wipe');sessionStorage.removeItem('kt-wipe')}catch(e){}
+  if(t&&!still&&cur.animate){
+    cur.querySelector('span').textContent=t;cur.querySelector('i').textContent='Открываю';cur.style.display='flex';
+    var go=function(){cur.animate([{transform:'translateY(0)'},{transform:'translateY(-100%)'}],{duration:700,easing:'cubic-bezier(.7,0,.2,1)',fill:'forwards'}).onfinish=function(){cur.style.display='none'}};
+    if(document.readyState==='complete')setTimeout(go,150);else addEventListener('load',function(){setTimeout(go,150)});
+    setTimeout(go,2500);
+  }
+  var y=scrollY;addEventListener('scroll',function(){var n=scrollY;back.classList.toggle('kt-hide',n>y&&n>120);y=n},{passive:true});
+  back.addEventListener('click',function(e){
+    if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||still||!cur.animate)return;
+    e.preventDefault();if(cur.style.display==='flex')return;
+    var href=back.getAttribute('href');try{sessionStorage.setItem('kt-wipe','Портфолио')}catch(e){}
+    cur.querySelector('span').textContent='Портфолио';cur.querySelector('i').textContent='Возвращаюсь';cur.style.display='flex';
+    cur.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],{duration:560,easing:'cubic-bezier(.7,0,.2,1)',fill:'forwards'}).onfinish=function(){setTimeout(function(){location.href=href},120)};
+    setTimeout(function(){location.href=href},1200);
+  });
+  addEventListener('pageshow',function(e){if(e.persisted){cur.style.display='none';cur.getAnimations&&cur.getAnimations().forEach(function(a){a.cancel()})}});
+})();
+</script>
+<!-- /kt-transition -->
+
         <a href="#tours" class="skip-link">Перейти к содержимому</a>
 
         <header class="header">

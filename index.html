@@ -118,6 +118,30 @@ a.it-a:hover .th img{transform:scale(1.05)}
 </style>
 </head>
 <body>
+<!-- kt-transition: шторка портфолио Kyotomoon -->
+<style id="kt-style">
+#kt-cur{position:fixed;left:0;right:0;top:-40vh;bottom:-40vh;z-index:2147483646;background:#D4FF3A;display:none;align-items:flex-end;padding:0 clamp(20px,4vw,56px) calc(40vh + clamp(20px,4vw,56px));pointer-events:none;will-change:transform}
+#kt-cur span{font:800 clamp(36px,7vw,96px)/.95 "Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.04em;color:#111}
+#kt-cur i{position:absolute;top:calc(40vh + clamp(20px,4vw,56px));left:clamp(20px,4vw,56px);font:500 13px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:#111}
+@media (pointer:coarse){#kt-cur{padding-bottom:calc(40vh + 110px + env(safe-area-inset-bottom))}#kt-cur i{top:calc(40vh + 90px + env(safe-area-inset-top))}}
+</style>
+<div id="kt-cur" aria-hidden="true"><i></i><span></span></div>
+<script>
+(function(){
+  var cur=document.getElementById('kt-cur');
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t=null;try{t=sessionStorage.getItem('kt-wipe');sessionStorage.removeItem('kt-wipe')}catch(e){}
+  if(t&&!still&&cur.animate){
+    cur.querySelector('span').textContent=t;cur.querySelector('i').textContent='Открываю';cur.style.display='flex';
+    var go=function(){cur.animate([{transform:'translateY(0)'},{transform:'translateY(-100%)'}],{duration:700,easing:'cubic-bezier(.7,0,.2,1)',fill:'forwards'}).onfinish=function(){cur.style.display='none'}};
+    if(document.readyState==='complete')setTimeout(go,150);else addEventListener('load',function(){setTimeout(go,150)});
+    setTimeout(go,2500);
+  }
+  addEventListener('pageshow',function(e){if(e.persisted){cur.style.display='none';cur.getAnimations&&cur.getAnimations().forEach(function(a){a.cancel()})}});
+})();
+</script>
+<!-- /kt-transition -->
+
 <div class="page">
   <aside class="side">
     <div class="who">
@@ -242,6 +266,7 @@ document.querySelectorAll('a.it-a').forEach(a=>a.addEventListener('click',e=>{
   if(document.querySelector('.wipe'))return;
   const href=a.getAttribute('href'),th=a.querySelector('.th'),img=th&&th.querySelector('img');
   const title=a.querySelector('.it-h').firstChild.textContent.trim();
+  try{sessionStorage.setItem('kt-wipe',title)}catch(_){}
   const go=()=>{location.href=href};
   setTimeout(go,1200);
   if(img)img.animate([{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:500,easing:'cubic-bezier(.2,.7,.2,1)'});
