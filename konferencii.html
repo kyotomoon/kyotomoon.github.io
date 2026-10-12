@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Конференции.РФ</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1b2333;--mut:#6b7385;--pri:#3d5afe;--bd:#dfe3ee;--err:#d93a4a;--ok:#1f9d63;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151d;--card:#1c2130;--tx:#e8ebf4;--mut:#98a0b5;--bd:#2c3348}}
+:root[data-theme="dark"]{--bg:#12151d;--card:#1c2130;--tx:#e8ebf4;--mut:#98a0b5;--bd:#2c3348}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,Arial,sans-serif}
+#app{max-width:480px;margin:0 auto;min-height:100vh}
+header{background:var(--pri);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header b{font-size:17px}main{padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 16px #0002}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pri)}
+.bad{border-color:var(--err)}.hint{color:var(--err);font-size:13px;min-height:16px}
+button{border:0;border-radius:8px;padding:10px 14px;background:var(--pri);color:#fff;font:inherit;font-weight:600;cursor:pointer;transition:transform .1s,opacity .2s}
+button:active{transform:scale(.96)}button:hover{opacity:.9}
+.w{width:100%;margin-top:14px}.ghost{background:transparent;border:1px solid #fff8}.sm{padding:6px 10px;font-size:13px}
+.link{background:none;color:var(--pri);padding:0;font-weight:500}.c{text-align:center;margin-top:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;color:#fff}
+.s1{background:#8a93a8}.s2{background:#e08a00}.s3{background:var(--ok)}
+.alert{background:#d93a4a22;color:var(--err);padding:10px;border-radius:8px;margin-top:10px}
+.slider{position:relative;overflow:hidden;height:170px;border-radius:12px;margin-bottom:16px}
+.track{display:flex;height:100%;transition:transform .5s}
+.slide{min-width:100%;height:170px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;text-align:center;padding:0 40px}
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;padding:0;border-radius:50%;background:#0006}
+.dots{position:absolute;bottom:8px;left:0;right:0;text-align:center}.dots i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff6;margin:0 3px}.dots i.on{background:#fff}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.pg{display:flex;gap:6px;justify-content:center;margin-top:8px}.pg button{background:var(--card);color:var(--tx);border:1px solid var(--bd);padding:6px 11px}.pg button.on{background:var(--pri);color:#fff}
+#toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 62px);left:50%;transform:translate(-50%,-30px);background:var(--ok);color:#fff;padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.3s;z-index:9;max-width:90%}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.page{animation:in .3s}@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+small{color:var(--mut)}
+</style></head><body><div id="app"></div><div id="toast"></div>
+<script>
+const ST=['Новая','Мероприятие назначено','Мероприятие завершено'];
+const ROOMS=['Аудитория — 101','Аудитория — 202','Коворкинг — «Центр»','Кинозал — «Премьера»'];
+const PAY=['Наличные','Банковская карта','Безналичный расчёт'];
+const users=[{login:'Admin26',pass:'Demo20',name:'Администратор',role:'admin'},{login:'ivanov1',pass:'password1',name:'Иванов Иван Иванович',phone:'+7 900 111 22 33',email:'ivan@mail.ru',role:'user'}];
+let bookings=[[0,'12.10.2026',0,1],[1,'15.10.2026',1,2],[2,'20.10.2026',2,3],[3,'01.11.2026',0,1],[0,'05.11.2026',1,1],[1,'11.11.2026',2,2],[2,'18.11.2026',0,3],[3,'25.11.2026',1,1]]
+ .map((b,i)=>({id:i+1,user:'ivanov1',room:b[0],date:b[1],pay:b[2],st:b[3]-1,review:null}));
+let me=null,page='login',form={},err={},authErr='',flt=-1,srt='desc',pg=1,si=0,timer;
+const $=s=>document.querySelector(s),H=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const key=d=>d.split('.').reverse().join('');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function go(p){page=p;form={};err={};authErr='';clearInterval(timer);render()}
+function fld(n,l,t='text',ph=''){return `<label>${l}</label><input name="${n}" type="${t}" placeholder="${ph}" value="${t==='password'?'':H(form[n])}" class="${err[n]?'bad':''}"><div class="hint">${H(err[n])}</div>`}
+function read(){document.querySelectorAll('input[name],textarea[name],select[name]').forEach(e=>form[e.name]=e.value)}
+function reg(){read();err={};const f=form;
+ ['login','password','name','phone','email'].forEach(k=>{if(!(f[k]||'').trim())err[k]='Поле обязательно'});
+ if(!err.login){if(!/^[A-Za-z0-9]{6,}$/.test(f.login))err.login='Латиница и цифры, минимум 6 символов';else if(users.some(u=>u.login.toLowerCase()===f.login.toLowerCase()))err.login='Такой логин уже занят'}
+ if(!err.password&&f.password.length<8)err.password='Пароль минимум 8 символов';
+ if(!err.email&&!/^\S+@\S+\.\S+$/.test(f.email))err.email='Некорректный e-mail';
+ if(!err.phone&&!/^\+?[0-9\s\-()]{10,18}$/.test(f.phone))err.phone='Некорректный телефон';
+ if(Object.keys(err).length)return render();
+ users.push({login:f.login,pass:f.password,name:f.name,phone:f.phone,email:f.email,role:'user'});go('login');toast('Регистрация успешна, войдите')}
+function login(){read();const u=users.find(x=>x.login===form.login);
+ if(!u)authErr='Пользователь с таким логином не найден';else if(u.pass!==form.password)authErr='Неверный пароль';
+ if(authErr)return render();me=u;go(u.role==='admin'?'admin':'cabinet')}
+function book(){read();err={};const m=(form.date||'').match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+ const d=m&&new Date(+m[3],+m[2]-1,+m[1]);
+ if(!m||d.getDate()!=+m[1]||d.getMonth()!=+m[2]-1)err.date='Дата в формате ДД.ММ.ГГГГ';
+ else if(d<new Date(new Date().setHours(0,0,0,0)))err.date='Дата не может быть в прошлом';
+ if(err.date)return render();
+ bookings.push({id:bookings.length+1,user:me.login,room:+form.room,date:form.date,pay:+form.pay,st:0,review:null});go('cabinet');toast('Заявка отправлена администратору')}
+function review(id){read();const b=bookings.find(x=>x.id===id),t=(form['t'+id]||'').trim();
+ if(!t)return toast('Введите текст отзыва');b.review={r:form['r'+id]||5,t};render();toast('Спасибо за отзыв!')}
+function setSt(id){read();bookings.find(x=>x.id===id).st=+form['s'+id];render();toast('Статус заявки обновлён')}
+function slider(){const G=['#3d5afe,#7c4dff','#1f9d63,#20c997','#e5484d,#f59e0b','#8e4ec6,#d6409f'],T=['Аудитории','Коворкинги','Кинозалы','Всероссийские конференции'];
+ return `<div class="slider"><div class="track" id="tr">${T.map((t,i)=>`<div class="slide" style="background:linear-gradient(135deg,${G[i]})">${t}</div>`).join('')}</div>
+ <button class="arr" style="left:6px" onclick="mv(-1)">‹</button><button class="arr" style="right:6px" onclick="mv(1)">›</button>
+ <div class="dots">${T.map((_,i)=>`<i class="${i===si?'on':''}"></i>`).join('')}</div></div>`}
+function mv(d){si=(si+d+4)%4;const t=$('#tr');if(!t)return;t.style.transform=`translateX(-${si*100}%)`;document.querySelectorAll('.dots i').forEach((e,i)=>e.classList.toggle('on',i===si))}
+function view(){
+ if(page==='login')return `<h3>Вход</h3>${authErr?`<div class="alert">${authErr}</div>`:''}${fld('login','Логин')}${fld('password','Пароль','password')}
+ <button class="w" onclick="login()">Войти</button><div class="c"><button class="link" onclick="go('register')">Еще не зарегистрированы? Регистрация</button></div>
+ <div class="c"><small>Демо: Admin26 / Demo20 · ivanov1 / password1</small></div>`;
+ if(page==='register')return `<h3>Регистрация</h3>${fld('login','Логин','text','латиница и цифры, от 6')}${fld('password','Пароль','password','от 8 символов')}${fld('name','ФИО')}${fld('phone','Телефон','tel','+7 900 000 00 00')}${fld('email','E-mail','email')}
+ <button class="w" onclick="reg()">Зарегистрироваться</button><div class="c"><button class="link" onclick="go('login')">Уже есть аккаунт? Вход</button></div>`;
+ if(page==='booking')return `<h3>Новая заявка</h3><label>Помещение</label><select name="room">${ROOMS.map((r,i)=>`<option value="${i}">${r}</option>`).join('')}</select>
+ ${fld('date','Дата начала','text','ДД.ММ.ГГГГ')}<label>Способ оплаты</label><select name="pay">${PAY.map((r,i)=>`<option value="${i}">${r}</option>`).join('')}</select>
+ <button class="w" onclick="book()">Отправить</button>`;
+ if(page==='cabinet'){const mine=bookings.filter(b=>b.user===me.login).reverse();
+  return slider()+`<h3>Мои заявки</h3>${mine.length?'':'<small>Заявок пока нет</small>'}`+mine.map(b=>`<div class="card"><b>${ROOMS[b.room]}</b><br><small>${b.date} · ${PAY[b.pay]}</small><br><span class="badge s${b.st+1}">${ST[b.st]}</span>
+  ${b.review?`<p>Ваш отзыв (${b.review.r}/5): ${H(b.review.t)}</p>`:b.st>0?`<div class="row" style="margin-top:8px"><select name="r${b.id}">${[5,4,3,2,1].map(n=>`<option>${n}</option>`).join('')}</select></div><textarea name="t${b.id}" placeholder="Ваш отзыв" style="margin-top:6px"></textarea><button class="sm" style="margin-top:6px" onclick="review(${b.id})">Оставить отзыв</button>`:'<br><small>Отзыв станет доступен после изменения статуса</small>'}</div>`).join('')}
+ if(page==='admin'){let l=bookings.filter(b=>flt<0||b.st===flt).sort((a,b)=>srt==='asc'?key(a.date)-key(b.date):key(b.date)-key(a.date));
+  const pages=Math.max(1,Math.ceil(l.length/5));pg=Math.min(pg,pages);l=l.slice((pg-1)*5,pg*5);
+  return `<h3>Панель администратора</h3><div class="row"><select onchange="flt=+this.value;pg=1;render()"><option value="-1">Все статусы</option>${ST.map((s,i)=>`<option value="${i}" ${flt===i?'selected':''}>${s}</option>`).join('')}</select>
+  <select onchange="srt=this.value;render()"><option value="desc">Дата ↓</option><option value="asc" ${srt==='asc'?'selected':''}>Дата ↑</option></select></div><br>`+
+  l.map(b=>{const u=users.find(x=>x.login===b.user);return `<div class="card"><b>№${b.id} · ${H(u.name)}</b> <small>${H(u.phone)}</small><br>${ROOMS[b.room]} · ${b.date} · ${PAY[b.pay]}
+  <div class="row" style="margin-top:8px"><select name="s${b.id}">${ST.map((s,i)=>`<option value="${i}" ${b.st===i?'selected':''}>${s}</option>`).join('')}</select><button class="sm" style="flex:0 0 56px" onclick="setSt(${b.id})">OK</button></div></div>`}).join('')+
+  `<div class="pg">${Array.from({length:pages},(_,i)=>`<button class="${i+1===pg?'on':''}" onclick="pg=${i+1};render()">${i+1}</button>`).join('')}</div>`}
+}
+function render(){$('#app').innerHTML=`<header><b>Конференции.РФ</b><div>${me?`${me.role==='user'?`<button class="sm ghost" onclick="go('booking')">Заявка</button> `:''}<button class="sm ghost" onclick="me=null;go('login')">Выход</button>`:''}</div></header><main class="page">${view()}</main>`;
+ if(page==='cabinet'){clearInterval(timer);timer=setInterval(()=>mv(1),3000)}
+ const d=$('input[name=date]');if(d)d.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=v.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{2}\.\d{2})(\d)/,'$1.$2')})}
+render();
+</script></body></html>
