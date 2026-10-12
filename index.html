@@ -112,11 +112,13 @@ a.it-a:hover .th img{transform:scale(1.05)}
 .zoom img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
 .zoom-ph{display:flex;justify-content:center;padding-top:10px}
 .zoom-ph img{width:auto;height:120%;border-radius:10px 10px 0 0}
-.wipe{position:fixed;inset:0;z-index:101;pointer-events:none;background:var(--mark);transform:translateY(100%);
-  display:flex;align-items:flex-end;padding:clamp(20px,4vw,56px)}
+.veil{position:fixed;left:0;right:0;top:-40vh;bottom:-40vh;z-index:99;background:#111;pointer-events:none;opacity:0}
+.wipe{position:fixed;left:0;right:0;top:-40vh;bottom:-40vh;z-index:101;pointer-events:none;background:var(--mark);transform:translateY(100%);
+  display:flex;align-items:flex-end;padding:clamp(20px,4vw,56px);padding-bottom:calc(40vh + clamp(20px,4vw,56px))}
 .wipe span{font:800 clamp(36px,7vw,96px)/.95 var(--f-d);letter-spacing:-.04em;color:var(--ink)}
-.wipe i{position:absolute;top:clamp(20px,4vw,56px);left:clamp(20px,4vw,56px);font:500 13px var(--f-m);font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.wipe i{position:absolute;top:calc(40vh + clamp(20px,4vw,56px));left:clamp(20px,4vw,56px);font:500 13px var(--f-m);font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
 .ready .it{animation:none}
+@media (pointer:coarse){.wipe{padding-bottom:calc(40vh + 110px + env(safe-area-inset-bottom))}.wipe i{top:calc(40vh + 90px + env(safe-area-inset-top))}}
 @media (prefers-reduced-motion:reduce){.side>*,.fact,.bar,.it{animation:none}}
 </style>
 </head>
@@ -246,6 +248,8 @@ document.querySelectorAll('a.it-a').forEach(a=>a.addEventListener('click',e=>{
   const title=a.querySelector('.it-h').firstChild.textContent.trim();
   const go=()=>{location.href=href};
   setTimeout(go,1400);
+  const v=document.createElement('div');v.className='veil';document.body.appendChild(v);
+  v.animate([{opacity:0},{opacity:1}],{duration:350,easing:'ease-out',fill:'forwards'});
   if(img){
     const r=th.getBoundingClientRect(),z=document.createElement('div');
     z.className='zoom'+(th.classList.contains('th-phone')?' zoom-ph':'');
@@ -261,7 +265,7 @@ document.querySelectorAll('a.it-a').forEach(a=>a.addEventListener('click',e=>{
   w.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],
             {duration:520,delay:img?560:0,easing:'cubic-bezier(.7,0,.2,1)',fill:'forwards'}).onfinish=()=>setTimeout(go,180);
 }));
-addEventListener('pageshow',e=>{if(e.persisted)document.querySelectorAll('.zoom,.wipe').forEach(n=>n.remove())});
+addEventListener('pageshow',e=>{if(e.persisted)document.querySelectorAll('.zoom,.wipe,.veil').forEach(n=>n.remove())});
 </script>
 </body>
 </html>
