@@ -776,7 +776,6 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
   </div>
   <figure class="hero-ph rv">
     <div class="frame"><img src="img/club-3.jpg" alt="Полный стол игроков на турнире в «Сопрано»" width="1280" height="854" fetchpriority="high"></div>
-    <a class="stamp st79" href="#billiard" aria-label="Бильярд 1979 года — история стола"><div><div class="s1">бильярд</div><div class="s2">1979</div><div class="s3 it">италия</div></div></a>
   </figure>
 </div></section>
 
@@ -1025,7 +1024,7 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
   <div class="gt"><table class="g">
     <tr><th>Компонент</th><th>Устройство</th><th>Размеры, px (1440 / 390)</th></tr>
     <tr><td>Логотип</td><td>файл заказчика, переведён в маску: цвет берётся из палитры («Бумага»), жёлтый оригинал не используется. В шапке — знак и надпись в строку, в подвале — полный логотип</td><td>знак 26×46 / 22×39 · надпись 152×26 / 124×21 · подвал 132 / 104</td></tr>
-    <tr><td>Фото</td><td>только реальные фото клуба. Главное — полный турнирный стол, в рамке-отпечатке «Бумага» со штампом «1979». Бильярд — фото директора за столом 1979 года, с подложкой цвета акцента со сдвигом. Зал — полароиды</td><td>рамка 14 / 8 · подложка сдвиг 22 / 14 · кадр 5:4 / 4:3,4</td></tr>
+    <tr><td>Фото</td><td>только реальные фото клуба. Главное — полный турнирный стол, в рамке-отпечатке «Бумага». Бильярд — фото директора за столом 1979 года, с подложкой цвета акцента со сдвигом. Зал — полароиды</td><td>рамка 14 / 8 · подложка сдвиг 22 / 14 · кадр 5:4 / 4:3,4</td></tr>
     <tr><td>Плитки «Чем заняться»</td><td>фон «Табло», верхняя линия 3 px акцентом (покер — цветом «Покер»), крупный знак: ♠, шар «8», «Бар», «PS5»</td><td>знак 132 / 104 · заголовок 32 · 4 / 2 / 1 в ряд</td></tr>
     <tr><td>Вопросы</td><td>аккордеон: вопрос Sofia Bold КАПС, «+» в квадрате-обводке, при открытии поворачивается в «×»; заголовок блока слева липнет при прокрутке</td><td>вопрос 28 / 23 · ответ 18 / 17</td></tr>
     <tr><td>Карточка «Ближайший турнир»</td><td>фон «Табло», верхняя линия 3 px цветом «Покер», обратный отсчёт плитками сплит-флэп</td><td>название 56 / 44 · плитки 40×54 / 30×42</td></tr>
@@ -1041,7 +1040,7 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
   <h3>Анимации</h3>
   <div class="gt"><table class="g">
     <tr><th>Где</th><th>Что происходит</th><th>Время</th></tr>
-    <tr><td>Первый экран</td><td>заголовок выезжает снизу; фото проявляется, как отпечаток, и медленно отъезжает; штамп «1979» опускается с эффектом штамповки</td><td>0,8 с · проявка 2,2 с · отъезд 16 с · штамп 0,55 с</td></tr>
+    <tr><td>Первый экран</td><td>заголовок выезжает снизу; фото проявляется, как отпечаток, и медленно отъезжает</td><td>0,8 с · проявка 2,2 с · отъезд 16 с</td></tr>
     <tr><td>Бильярд 1979</td><td>год «отматывается» от текущего до 1979</td><td>1,6 с</td></tr>
     <tr><td>Лобби</td><td>заголовок «Лобби» выезжает снизу; штамп «открыто до 02:00» штампуется</td><td>0,8 с · штамп 0,55 с</td></tr>
     <tr><td>Чем заняться</td><td>плитки выходят по очереди, шар «8» закатывается слева с вращением</td><td>0,6 с, шаг 90 мс · шар 1,2 с</td></tr>
@@ -1346,7 +1345,7 @@ const goTo = (sel, block = 'start') => document.querySelector(sel).scrollIntoVie
 let touring = false;
 document.getElementById('tourBtn').onclick = async () => {
   if(still || touring) return; touring = true;
-  goTo('#top'); await wait(700); replay([...document.querySelectorAll('.hero h1, .hero-ph img, .hero .stamp')]); await wait(2000);
+  goTo('#top'); await wait(700); replay([...document.querySelectorAll('.hero h1, .hero-ph img')]); await wait(2000);
   goTo('#billiard'); await wait(800); rewind(); await wait(2200);
   goTo('#lobby'); await wait(700); replay([...document.querySelectorAll('.lhero .lt, .lhero .stamp')]); await wait(1600);
   goTo('#tour'); await wait(700); replay([...document.querySelectorAll('.trow')]); await wait(1800);
