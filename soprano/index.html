@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Покер-рум Сопрано</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@700;900&family=Instrument+Serif:ital@1&family=Rubik:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Палитры: те же роли и HEX, что в превью лендинга ---------- */
+:root, [data-p="1"] {
+  --bg:#0C0B0A; --paper:#F2E8D5; --ink:#14110D; --accent:#E8352B; --on-accent:#F2E8D5;
+  --italic:#E8352B; --poker:#6F89FF; --on-poker:#0C0B0A; --muted:#8C857A; --line:#2B2823;
+  --board:#151310; --tile:#22201B; --muted-paper:#5E574C;
+}
+[data-p="2"] {
+  --bg:#140C0D; --paper:#EFE3CF; --ink:#1C1012; --accent:#C9973F; --on-accent:#140C0D;
+  --italic:#8E2234; --poker:#D9A54A; --on-poker:#140C0D; --muted:#94867C; --line:#2E2224;
+  --board:#1C1214; --tile:#2A1B1E; --muted-paper:#6B5A50;
+}
+[data-p="3"] {
+  --bg:#0F1A15; --paper:#EDE4CF; --ink:#13201A; --accent:#E8642C; --on-accent:#0F1A15;
+  --italic:#E8642C; --poker:#7CC39C; --on-poker:#0F1A15; --muted:#8B9A90; --line:#24332B;
+  --board:#14221B; --tile:#1D2E25; --muted-paper:#56645B;
+}
+[data-p="4"] {
+  --bg:#0A0D1C; --paper:#ECE8DE; --ink:#0E1226; --accent:#FF5A36; --on-accent:#0A0D1C;
+  --italic:#3A5BFF; --poker:#8EA2FF; --on-poker:#0A0D1C; --muted:#8A8FA8; --line:#22273F;
+  --board:#10142A; --tile:#1A1F38; --muted-paper:#555A73;
+}
+[data-p="5"] {
+  --bg:#EFE6D2; --paper:#14110D; --ink:#F2E8D5; --accent:#D9301F; --on-accent:#F2E8D5;
+  --italic:#D9301F; --poker:#2C4BD8; --on-poker:#F2E8D5; --muted:#7A7264; --line:#CFC4AE;
+  --board:#E6DCC6; --tile:#D9CEB6; --muted-paper:#B8AE9C;
+}
+
+/* ---------- База (как в лендинге) ---------- */
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--paper); font:400 18px/1.5 "Rubik", system-ui, sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+a { color:inherit; }
+section, header.top, footer, .guide { overflow-x:clip; }
+.cond { font-family:"Sofia Sans Extra Condensed", "Arial Narrow", sans-serif; }
+.it { font-family:"Instrument Serif", Georgia, serif; font-style:italic; font-weight:400; }
+.mono { font:500 12px/1.4 "IBM Plex Mono", monospace; }
+.wrap { max-width:1440px; margin:0 auto; padding:0 48px; }
+section { padding:96px 0; }
+.btn { display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 30px; border:0; border-radius:0;
+  font:700 22px/1 "Sofia Sans Extra Condensed", sans-serif; letter-spacing:.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; white-space:nowrap; }
+.btn-acc { background:var(--accent); color:var(--on-accent); }
+.btn-ghost { background:transparent; color:var(--paper); box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--paper) 40%, transparent); }
+.btn-poker { background:var(--poker); color:var(--on-poker); }
+.btn-sm { height:46px; font-size:20px; padding:0 22px; }
+.btn[disabled] { opacity:.4; cursor:not-allowed; }
+h2.big { font:900 clamp(64px, 9.4vw, 136px)/.86 "Sofia Sans Extra Condensed", sans-serif; text-transform:uppercase; letter-spacing:-.005em; }
+h2.mid { font:900 clamp(48px, 6vw, 88px)/.88 "Sofia Sans Extra Condensed", sans-serif; text-transform:uppercase; }
+.todo { color:var(--muted); font-size:.82em; white-space:nowrap; }
+
+/* ---------- Панель превью (не часть дизайна) ---------- */
+.pv { position:sticky; top:0; z-index:50; background:#1d1d1f; color:#f5f5f7; font:500 14px/1 system-ui, sans-serif; }
+.pv .in { max-width:1440px; margin:0 auto; padding:10px 16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.pv button { font:inherit; color:#f5f5f7; background:#2c2c2e; border:1px solid #3a3a3c; border-radius:6px; padding:7px 11px; cursor:pointer; display:inline-flex; gap:7px; align-items:center; }
+.pv button[aria-pressed="true"] { background:#f5f5f7; color:#1d1d1f; }
+.pv i { width:12px; height:12px; border-radius:50%; display:inline-block; }
+.pv .links { margin-left:auto; display:flex; gap:14px; }
+.pv a { color:#c7c7cc; }
+.pv .tourb { background:#E8352B; border-color:#E8352B; color:#fff; }
+
+/* ---------- Шапка ---------- */
+header.top { border-bottom:1px solid var(--line); }
+header.top .wrap { display:flex; align-items:center; gap:40px; height:84px; }
+.logo { font:900 34px/1 "Sofia Sans Extra Condensed", sans-serif; letter-spacing:.06em; text-decoration:none; }
+nav.menu { display:flex; gap:28px; font-size:24px; }
+nav.menu a { text-decoration:none; }
+nav.menu a:hover, nav.menu a[aria-current] { color:var(--accent); }
+.top .phone { margin-left:auto; font-weight:500; text-decoration:none; }
+
+/* ---------- 1. Первый экран лобби ---------- */
+.lhero { padding:56px 0 72px; border-bottom:1px solid var(--line); }
+.lhero .wrap { display:grid; grid-template-columns:1.1fr 1fr; gap:64px; align-items:end; }
+.crumbs { font-size:26px; color:var(--muted); margin-bottom:8px; }
+.crumbs a { text-decoration:none; }
+.crumbs b { color:var(--poker); font-weight:400; }
+.lhero h1 { font:900 clamp(96px, 15vw, 216px)/.8 "Sofia Sans Extra Condensed", sans-serif; text-transform:uppercase; letter-spacing:-.02em; }
+.lhero p.lead { font-size:20px; max-width:30em; margin-top:28px; }
+.lhero p.lead em { font-family:"Instrument Serif"; font-size:1.3em; line-height:1; color:var(--poker); }
+.next { background:var(--board); border:1px solid var(--line); border-top:3px solid var(--poker); padding:26px 28px 28px; }
+.next-h { display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
+.next-h h3 { font:700 24px/1 "Sofia Sans Extra Condensed"; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.next-h .mono { color:var(--muted); }
+.next .title { font:900 56px/.9 "Sofia Sans Extra Condensed"; text-transform:uppercase; margin:18px 0 4px; }
+.next .when { font-size:26px; color:var(--poker); }
+.cd { display:flex; align-items:flex-end; gap:10px; margin:24px 0 22px; flex-wrap:wrap; }
+.cd .u { display:flex; flex-direction:column; gap:6px; }
+.cd .u span { font:700 14px/1 "Sofia Sans Extra Condensed"; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.cd .sep { font:900 44px/54px "Sofia Sans Extra Condensed"; color:var(--muted); align-self:flex-start; margin-top:20px; }
+.flap { display:flex; gap:4px; }
+.flap b { position:relative; width:40px; height:54px; border-radius:3px; background:var(--tile); display:grid; place-items:center;
+  font:900 44px/1 "Sofia Sans Extra Condensed"; color:var(--paper); overflow:hidden; }
+.flap b::after { content:""; position:absolute; left:0; right:0; top:50%; height:1.5px; background:var(--board); }
+.flap.pk b { color:var(--poker); }
+.flap.acc b { color:var(--accent); }
+.flap.sm b { width:30px; height:40px; font-size:32px; }
+.next-f { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:20px; border-top:1px solid var(--line); }
+.seats-l { display:flex; align-items:center; gap:12px; }
+.seats-l .lbl { font:700 16px/1.15 "Sofia Sans Extra Condensed"; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+
+/* ---------- 2. Турниры: фильтры + табло ---------- */
+.tour-h { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:36px; }
+.tour-h .it { font-size:30px; color:var(--muted); margin-top:10px; }
+.filters { display:flex; flex-direction:column; gap:12px; align-items:flex-end; }
+.seg { display:flex; box-shadow:inset 0 0 0 1.5px var(--line); }
+.seg button, .chips button { font:700 20px/1 "Sofia Sans Extra Condensed"; letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+  background:transparent; color:var(--paper); border:0; height:44px; padding:0 20px; border-radius:0; }
+.seg button[aria-pressed="true"] { background:var(--paper); color:var(--bg); }
+.chips { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.chips button { height:36px; padding:0 14px; font-size:17px; box-shadow:inset 0 0 0 1.5px var(--line); color:var(--muted); }
+.chips button[aria-pressed="true"] { box-shadow:inset 0 0 0 1.5px var(--poker); color:var(--poker); }
+
+.tboard { background:var(--board); border:1px solid var(--line); }
+.thead, .trow { display:grid; grid-template-columns:150px 1.6fr 1fr 110px 128px 170px 230px; gap:20px; align-items:center; padding:0 28px; }
+.thead { height:52px; border-bottom:1px solid var(--line); font:700 15px/1 "Sofia Sans Extra Condensed"; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.trow { padding-top:20px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.trow:last-child { border-bottom:0; }
+.trow.done { opacity:.5; }
+.t-date { font:900 40px/.9 "Sofia Sans Extra Condensed"; }
+.t-date span { display:block; font:400 20px/1.2 "Instrument Serif"; font-style:italic; color:var(--muted); }
+.t-date small { font:900 22px/1 "Sofia Sans Extra Condensed"; color:var(--muted); margin-left:6px; }
+.t-name { font:700 28px/1.02 "Sofia Sans Extra Condensed"; letter-spacing:.03em; text-transform:uppercase; }
+.t-name span { display:block; font:400 20px/1.25 "Instrument Serif"; font-style:italic; text-transform:none; letter-spacing:0; color:var(--poker); margin-top:4px; }
+.t-fmt { font-size:16px; color:var(--muted); line-height:1.35; }
+.t-fmt b { display:block; color:var(--paper); font-weight:500; }
+.t-stack { font:900 28px/1 "Sofia Sans Extra Condensed"; }
+.t-stack span { display:block; font:400 16px/1.3 "Rubik"; color:var(--muted); }
+.t-seats { display:flex; align-items:center; gap:6px; }
+.t-seats i { font:900 24px/1 "Sofia Sans Extra Condensed"; font-style:normal; color:var(--muted); }
+.badge { display:inline-flex; align-items:center; height:30px; padding:0 12px; font:700 16px/1 "Sofia Sans Extra Condensed"; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
+.b-open { box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--paper) 40%, transparent); }
+.b-last { background:var(--accent); color:var(--on-accent); }
+.b-live { background:var(--poker); color:var(--on-poker); }
+.b-live::before { content:""; width:8px; height:8px; border-radius:50%; background:currentColor; margin-right:8px; animation:blink 1.4s steps(2) infinite; }
+@keyframes blink { 50% { opacity:0; } }
+.b-rank { box-shadow:inset 0 0 0 1.5px var(--poker); color:var(--poker); }
+.b-done { color:var(--muted); box-shadow:inset 0 0 0 1.5px var(--line); }
+.t-act { display:flex; gap:8px; justify-content:flex-end; }
+.t-act .btn { height:44px; font-size:19px; padding:0 16px; }
+.empty { padding:48px 28px; color:var(--muted); font-size:26px; }
+
+/* ---------- 3. Столы сейчас ---------- */
+.tables { border-top:1px solid var(--line); }
+.tables-h { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:40px; }
+.tables-h .it { font-size:30px; color:var(--poker); }
+.tgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.tcard { border:1px solid var(--line); background:var(--board); padding:24px; display:flex; flex-direction:column; gap:18px; }
+.tcard-h { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.tcard-h h3 { font:700 32px/1 "Sofia Sans Extra Condensed"; letter-spacing:.03em; text-transform:uppercase; }
+.tcard-h h3 span { display:block; font:400 20px/1.3 "Instrument Serif"; font-style:italic; text-transform:none; letter-spacing:0; color:var(--muted); margin-top:4px; }
+/* Стол сверху: борт, сукно, линия ставок; места за бортом, дилер в центре нижней стороны */
+.mini { margin:4px -6px 0; }
+.mini svg { display:block; width:100%; height:auto; overflow:visible; }
+.mini .rail { fill:var(--tile); stroke:var(--line); stroke-width:1.5; }
+.mini .rail-in { fill:none; stroke:color-mix(in srgb, var(--paper) 10%, transparent); stroke-width:1; }
+.mini .felt { fill:color-mix(in srgb, var(--poker) 16%, var(--board)); stroke:color-mix(in srgb, var(--poker) 45%, transparent); stroke-width:1.5; }
+.mini .bet { fill:none; stroke:color-mix(in srgb, var(--poker) 40%, transparent); stroke-width:1; stroke-dasharray:4 4; }
+.mini .logo-t { font:900 15px "Sofia Sans Extra Condensed"; letter-spacing:.2em; fill:color-mix(in srgb, var(--paper) 22%, transparent); text-anchor:middle; }
+.mini .pot { font:700 11px "Sofia Sans Extra Condensed"; letter-spacing:.1em; fill:var(--muted); text-anchor:middle; text-transform:uppercase; }
+.mini .card-f { fill:var(--paper); }
+.mini .card-b { fill:var(--poker); stroke:var(--board); stroke-width:1; }
+.mini .card-slot { fill:none; stroke:color-mix(in srgb, var(--paper) 22%, transparent); stroke-width:1; stroke-dasharray:3 2; }
+.mini .rank { font:900 11px "Sofia Sans Extra Condensed"; fill:var(--ink); text-anchor:middle; }
+.mini .rank.red { fill:var(--italic); }
+[data-p="5"] .mini .card-f { fill:var(--ink); stroke:var(--line); stroke-width:1; }
+[data-p="5"] .mini .rank { fill:var(--paper); }
+[data-p="5"] .mini .rank.red { fill:var(--italic); }
+/* Фишки: цилиндр из двух эллипсов (ребро темнее), вставки по краю пунктиром, кольцо на верхней */
+.mini .ch-r { --c:var(--accent); --e:var(--paper); }
+.mini .ch-b { --c:var(--poker); --e:var(--paper); }
+.mini .ch-w { --c:var(--paper); --e:var(--accent); }
+[data-p="5"] .mini .ch-r, [data-p="5"] .mini .ch-b { --e:var(--ink); }
+[data-p="2"] .mini .ch-b { --c:var(--italic); }
+.mini .ch-side { fill:color-mix(in srgb, var(--c) 60%, #000); stroke:color-mix(in srgb, var(--c) 45%, #000); stroke-width:.6; }
+.mini .ch-top { fill:var(--c); stroke:var(--e); stroke-width:1.5; stroke-dasharray:2.4 2.6; }
+.mini .ch-in { fill:none; stroke:var(--e); stroke-width:.8; opacity:.85; }
+.mini .ch-dot { fill:var(--e); opacity:.9; }
+.mini .btn-d { fill:var(--paper); stroke:var(--board); stroke-width:1; }
+.mini .btn-d-t { font:900 9px "Sofia Sans Extra Condensed"; fill:var(--ink); text-anchor:middle; }
+.mini .chair { fill:var(--paper); }
+.mini .chair-n { font:900 13px "Sofia Sans Extra Condensed"; fill:var(--ink); text-anchor:middle; }
+.mini .free .chair { fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3; }
+.mini .free .chair-n { fill:var(--muted); }
+.mini .dealer-tab { fill:var(--board); stroke:var(--line); stroke-width:1; }
+.mini .dealer-t { font:700 10px "Sofia Sans Extra Condensed"; letter-spacing:.12em; fill:var(--muted); text-anchor:middle; text-transform:uppercase; }
+.mini-key { display:flex; gap:16px; flex-wrap:wrap; font:700 13px/1 "Sofia Sans Extra Condensed"; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.mini-key i { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-1px; margin-right:6px; background:var(--paper); }
+.mini-key i.f { background:transparent; box-shadow:inset 0 0 0 1.5px var(--muted); }
+.mini-key i.d { background:var(--paper); box-shadow:0 0 0 2px var(--board), 0 0 0 3px var(--line); width:10px; height:10px; }
+.tstats { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); }
+.tstats div { padding:14px 0 0; }
+.tstats div + div { padding-left:14px; border-left:1px solid var(--line); }
+.tstats b { display:block; font:900 32px/1 "Sofia Sans Extra Condensed"; }
+.tstats span { font:700 14px/1.2 "Sofia Sans Extra Condensed"; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.tcard .btn { align-self:flex-start; }
+.tcard.cta { background:var(--poker); color:var(--on-poker); border-color:var(--poker); justify-content:space-between; }
+.tcard.cta h3 { font:900 56px/.88 "Sofia Sans Extra Condensed"; text-transform:uppercase; }
+.tcard.cta p { font-size:18px; }
+.tcard.cta .btn { background:var(--on-poker); color:var(--poker); }
+
+/* ---------- 4. Рейтинг сезона ---------- */
+.rate { background:var(--paper); color:var(--ink); }
+.rate .wrap { display:grid; grid-template-columns:1.5fr 1fr; gap:64px; align-items:start; }
+.rate .head .it { font-size:34px; color:var(--italic); margin-top:8px; }
+.rtable { margin-top:36px; }
+.rrow { display:grid; grid-template-columns:72px 1fr 90px 90px 120px; gap:16px; align-items:baseline; padding:14px 0;
+  background:repeating-linear-gradient(90deg, var(--muted-paper) 0 8px, transparent 8px 14px) bottom/100% 1.5px no-repeat; }
+.rrow.h { font:700 15px/1 "Sofia Sans Extra Condensed"; letter-spacing:.1em; text-transform:uppercase; color:var(--muted-paper); padding:0 0 12px; }
+.rrow .pl { font:900 44px/1 "Sofia Sans Extra Condensed"; color:var(--muted-paper); }
+.rrow.top .pl { color:var(--poker); }
+.rrow .nm { font:700 28px/1 "Sofia Sans Extra Condensed"; letter-spacing:.03em; text-transform:uppercase; }
+.rrow .nm span { font:400 19px "Instrument Serif"; font-style:italic; text-transform:none; letter-spacing:0; color:var(--muted-paper); margin-left:8px; }
+.rrow .n { font:500 18px/1 "Rubik"; color:var(--muted-paper); }
+.rrow .pt { font:900 34px/1 "Sofia Sans Extra Condensed"; text-align:right; }
+.rrow.h .pt { font:inherit; }
+.rate .more { margin-top:24px; display:inline-block; font:700 22px/1 "Sofia Sans Extra Condensed"; letter-spacing:.06em; text-transform:uppercase; }
+.points { background:var(--bg); color:var(--paper); padding:32px; position:sticky; top:72px; }
+.points h3 { font:900 48px/.9 "Sofia Sans Extra Condensed"; text-transform:uppercase; }
+.points .it { font-size:24px; color:var(--poker); margin:8px 0 20px; }
+.prow { display:flex; justify-content:space-between; align-items:baseline; padding:10px 0; border-top:1px solid var(--line); }
+.prow span { font:700 22px/1 "Sofia Sans Extra Condensed"; letter-spacing:.05em; text-transform:uppercase; }
+.prow b { font:900 30px/1 "Sofia Sans Extra Condensed"; color:var(--poker); }
+.points p { font-size:16px; color:var(--muted); margin-top:18px; }
+
+/* ---------- 5. Правила коротко ---------- */
+.rules .grid { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); margin-top:44px; }
+.rule { padding:30px 32px 0 0; }
+.rule + .rule { padding-left:32px; border-left:1px solid var(--line); }
+.rule .n { font:900 96px/.8 "Sofia Sans Extra Condensed"; color:var(--poker); }
+.rule h3 { font:700 32px/1 "Sofia Sans Extra Condensed"; letter-spacing:.03em; text-transform:uppercase; margin:16px 0 10px; }
+.rule p { color:var(--muted); max-width:24em; }
+
+/* ---------- Модалка записи — билет ---------- */
+dialog { border:0; padding:0; background:transparent; max-width:min(860px, calc(100vw - 32px)); width:100%; margin:auto; color:var(--ink); }
+dialog::backdrop { background:color-mix(in srgb, var(--bg) 82%, transparent); }
+.ticket { position:relative; background:var(--paper); color:var(--ink); border-radius:14px; display:grid; grid-template-columns:1fr 230px;
+  -webkit-mask: radial-gradient(circle 18px at 0 50%, #0000 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 18px at 100% 50%, #0000 98%, #000) right/51% 100% no-repeat;
+          mask: radial-gradient(circle 18px at 0 50%, #0000 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 18px at 100% 50%, #0000 98%, #000) right/51% 100% no-repeat; }
+.ticket .main { padding:36px 40px; }
+.ticket h3 { font:900 60px/.86 "Sofia Sans Extra Condensed"; text-transform:uppercase; }
+.ticket .main > .it { font-size:24px; color:var(--italic); margin:6px 0 22px; }
+.f { display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; }
+.f label.fl { display:block; font:700 15px/1 "Sofia Sans Extra Condensed"; letter-spacing:.1em; text-transform:uppercase; color:var(--muted-paper); }
+.f input[type=text], .f input[type=tel] { display:block; width:100%; margin-top:7px; height:46px; border:0; border-bottom:1.5px solid var(--ink); border-radius:0;
+  background:transparent; color:var(--ink); font:400 18px "Rubik"; padding:0 2px; }
+.f input:focus { outline:none; border-bottom-color:var(--accent); }
+.f .full { grid-column:1/-1; }
+.chk { display:flex; gap:10px; align-items:flex-start; font-size:15px; line-height:1.35; color:var(--ink); cursor:pointer; }
+.chk input { width:20px; height:20px; accent-color:var(--accent); flex:none; margin-top:1px; }
+.err { color:var(--accent); font-size:14px; min-height:1.2em; grid-column:1/-1; }
+.ticket .stub { border-left:2px dashed var(--muted-paper); padding:36px 26px; display:flex; flex-direction:column; justify-content:space-between; gap:18px; }
+.stub .mono { color:var(--muted-paper); }
+.stub .ev { font:700 24px/1 "Sofia Sans Extra Condensed"; letter-spacing:.03em; text-transform:uppercase; }
+.stub .ev span { display:block; white-space:nowrap; font:900 34px/.9 "Sofia Sans Extra Condensed"; color:var(--accent); margin-top:6px; }
+.stub .btn { width:100%; }
+.x { position:absolute; top:12px; right:14px; width:36px; height:36px; border:0; background:transparent; color:var(--ink); font:400 30px/1 "Rubik"; cursor:pointer; }
+.ok { display:none; padding:8px 0 12px; }
+.ok h3 { color:var(--ink); }
+.ok p { margin-top:14px; font-size:18px; }
+.ticket.sent .main .form, .ticket.sent .main > h3, .ticket.sent .main > .it, .ticket.sent .stub .btn { display:none; }
+.ticket.sent .ok { display:block; }
+
+/* ---------- Подвал ---------- */
+footer { border-top:1px solid var(--line); padding:48px 0 56px; }
+footer .wrap { display:flex; align-items:center; gap:36px; flex-wrap:wrap; }
+.age { font:900 96px/.8 "Sofia Sans Extra Condensed"; color:var(--accent); }
+footer p { color:var(--muted); max-width:34em; font-size:16px; }
+footer .vk { margin-left:auto; font:700 26px/1 "Sofia Sans Extra Condensed"; letter-spacing:.06em; text-transform:uppercase; }
+
+
+/* ---------- Зал и бронь (с лендинга) ---------- */
+/* ---------- 7. Зал — полароиды ---------- */
+.hall { border-top:1px solid var(--line); }
+.pols { display:grid; grid-template-columns:repeat(4,1fr); gap:36px; margin-top:56px; }
+.pol { background:var(--paper); padding:14px 14px 0; position:relative; }
+.pol:nth-child(1){ transform:rotate(-3deg); } .pol:nth-child(2){ transform:rotate(2deg) translateY(24px); }
+.pol:nth-child(3){ transform:rotate(-1.5deg); } .pol:nth-child(4){ transform:rotate(3deg) translateY(16px); }
+.pol::before { content:""; position:absolute; top:-14px; left:50%; width:96px; height:28px; margin-left:-48px; background:var(--muted); opacity:.55; transform:rotate(-4deg); }
+.ph { aspect-ratio:1/1; background:var(--tile); display:grid; place-items:center; color:var(--muted); font-size:20px; text-align:center; padding:12px; }
+[data-p="5"] .ph { background:#2A251E; color:#B8AE9C; }
+.pol figcaption { color:var(--ink); font-size:24px; padding:12px 2px 16px; line-height:1.1; }
+.book .wrap { display:grid; grid-template-columns:1.35fr 1fr; gap:64px; align-items:center; }
+.contacts h2 { margin-bottom:28px; }
+.contacts dl { display:grid; grid-template-columns:auto 1fr; gap:14px 24px; font-size:19px; }
+.contacts dt { font:700 18px/1.4 "Sofia Sans Extra Condensed"; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.pol { --r:0deg; --ty:0px; --py:0px; transform:rotate(var(--r)) translateY(calc(var(--ty) + var(--py))); transition:transform .5s cubic-bezier(.2,.8,.2,1); will-change:transform; }
+.pol:nth-child(1){ --r:-3deg; } .pol:nth-child(2){ --r:2deg; --ty:24px; }
+.pol:nth-child(3){ --r:-1.5deg; } .pol:nth-child(4){ --r:3deg; --ty:16px; }
+.pol:hover { --r:0deg; z-index:2; }
+.book .stub .no { font:900 44px/.9 "Sofia Sans Extra Condensed"; color:var(--accent); }
+.f input[type=date], .f input[type=time], .f select { display:block; width:100%; margin-top:7px; height:46px; border:0; border-bottom:1.5px solid var(--ink); border-radius:0;
+  background:transparent; color:var(--ink); font:400 18px "Rubik"; padding:0 2px; }
+.book .ticket .stub { position:relative; }
+.okstamp { position:absolute; left:50%; top:50%; margin:-62px 0 0 -62px; width:124px; height:124px; border-radius:50%; border:3px solid var(--accent); color:var(--accent); white-space:nowrap;
+  display:none; place-items:center; align-content:center; text-align:center; transform:rotate(-14deg); font:900 24px/.9 "Sofia Sans Extra Condensed"; letter-spacing:.02em; text-transform:uppercase; }
+.okstamp::before { content:""; position:absolute; inset:7px; border-radius:50%; border:1.5px solid var(--accent); }
+.okstamp small { display:block; font:400 15px/1 "Instrument Serif"; font-style:italic; text-transform:none; letter-spacing:0; margin-top:5px; }
+.ticket.sent .okstamp { display:grid; }
+
+/* ---------- Штамп в шапке лобби ---------- */
+.lhero .rv:first-child { position:relative; }
+.stamp { z-index:2; position:absolute; right:2%; top:-18px; width:168px; height:168px; border-radius:50%;
+  background:var(--accent); color:var(--on-accent); transform:rotate(-14deg); display:grid; place-items:center; text-align:center; }
+.stamp::before { content:""; position:absolute; inset:9px; border-radius:50%; border:1.5px solid var(--on-accent); }
+.stamp::after { content:""; position:absolute; inset:-9px; border-radius:50%; border:3px solid var(--accent); }
+.stamp .s1 { font:700 19px/1 "Sofia Sans Extra Condensed"; letter-spacing:.14em; text-transform:uppercase; }
+.stamp .s2 { font:900 58px/.9 "Sofia Sans Extra Condensed"; }
+.stamp .s3 { font-size:22px; line-height:1; }
+.stamp .s2 { font-size:52px; }
+
+/* ---------- Мобильное меню ---------- */
+.burger { display:none; background:transparent; border:0; color:var(--paper); cursor:pointer; width:44px; height:44px; position:relative; }
+.burger i, .burger i::before, .burger i::after { position:absolute; height:2px; background:currentColor; content:""; display:block; }
+.burger i { left:10px; right:10px; top:21px; } .burger i::before { top:-8px; left:0; right:0; } .burger i::after { top:8px; left:0; right:0; }
+
+/* ---------- Анимации ---------- */
+/* штамп «штампуется» */
+.js .stamp { animation:stamp .55s cubic-bezier(.2,1.6,.4,1) .6s both; }
+@keyframes stamp { from { transform:rotate(-14deg) scale(1.9); opacity:0; } to { transform:rotate(-14deg) scale(1); opacity:1; } }
+.js .ticket.sent .okstamp { animation:stamp .5s cubic-bezier(.2,1.6,.4,1) both; }
+/* заголовок лобби выезжает снизу */
+.js .lhero h1 { animation:rise .8s cubic-bezier(.2,.8,.2,1) .1s both; }
+@keyframes rise { from { transform:translateY(40%); opacity:0; } to { transform:none; opacity:1; } }
+/* строки табло турниров появляются по очереди */
+.js .trow { animation:rowin .45s cubic-bezier(.2,.8,.2,1) calc(var(--i, 0) * 70ms) both; }
+@keyframes rowin { from { opacity:0; transform:translateX(-18px); } to { opacity:1; transform:none; } }
+/* сцена «раздача»: карты летят от дилера, общие переворачиваются, фишки падают стопкой */
+.mini .dl, .mini .dp, .mini .fl, .mini .pp { transform-box:fill-box; transform-origin:center; }
+.mini.anim .dl, .mini.anim .dp, .mini.anim .fl, .mini.anim .pp { opacity:0; }
+.mini.anim.go .dl { animation:deal .5s cubic-bezier(.2,.7,.2,1) var(--d) both; }
+.mini.anim.go .dp { animation:drop .38s cubic-bezier(.3,1.5,.5,1) var(--d) both; }
+.mini.anim.go .fl { animation:flipin .42s ease var(--d) both; }
+.mini.anim.go .pp { animation:pop .4s cubic-bezier(.3,1.6,.5,1) var(--d) both; }
+@keyframes deal { from { opacity:0; transform:translate(var(--dx), var(--dy)) rotate(-25deg); } 15% { opacity:1; } to { opacity:1; transform:none; } }
+@keyframes drop { from { opacity:0; transform:translateY(-26px); } to { opacity:1; transform:none; } }
+@keyframes flipin { from { opacity:1; transform:scaleX(0); } to { opacity:1; transform:none; } }
+@keyframes pop { from { opacity:0; transform:scale(0); } to { opacity:1; transform:none; } }
+.mini { cursor:pointer; }
+.mini-key .again { margin-left:auto; color:var(--poker); background:none; border:0; cursor:pointer; font:inherit; letter-spacing:inherit; text-transform:inherit; }
+@media (prefers-reduced-motion: reduce) {
+  html.js:not(.fm) .stamp, html.js:not(.fm) .lhero h1, html.js:not(.fm) .trow, html.js:not(.fm) .ticket.sent .okstamp { animation:none; }
+  html:not(.fm) .pol { transition:none; }
+  html:not(.fm) .mini-key .again { display:none; }
+}
+
+/* ---------- Гайдлайн ---------- */
+.guide { background:#F7F6F3; color:#1d1d1f; font:400 16px/1.5 system-ui, sans-serif; padding:72px 0 96px; }
+.guide h2 { font:700 34px/1.1 system-ui, sans-serif; margin-bottom:6px; }
+.guide h3 { font:600 20px/1.2 system-ui, sans-serif; margin:44px 0 16px; }
+.guide .sub { color:#6e6e73; }
+.sw { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:12px; }
+.sw div { border:1px solid #e3e1dc; background:#fff; }
+.sw span { display:block; height:64px; border-bottom:1px solid #e3e1dc; }
+.sw p { padding:9px 12px 11px; font-size:14px; line-height:1.35; }
+.sw code { font:500 13px "IBM Plex Mono", monospace; }
+table.g { border-collapse:collapse; width:100%; background:#fff; border:1px solid #e3e1dc; font-size:15px; }
+table.g th, table.g td { text-align:left; padding:10px 14px; border-bottom:1px solid #eceae5; vertical-align:top; }
+table.g th { background:#f1efea; font-weight:600; }
+.specimen { padding:22px; background:var(--bg); color:var(--paper); display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+
+/* ---------- Анимации ---------- */
+.js .rv { opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+.js .rv.in { opacity:1; transform:none; }
+.flap b.flip { animation:flip .18s linear; }
+@keyframes flip { 50% { transform:scaleY(.1); } }
+@media (prefers-reduced-motion: reduce) {
+  html.js:not(.fm) .rv { opacity:1; transform:none; transition:none; }
+  html:not(.fm) .flap b.flip, html:not(.fm) .b-live::before { animation:none; }
+}
+
+/* ---------- Ноутбук ---------- */
+@media (max-width: 1280px) {
+  .thead, .trow { grid-template-columns:120px 1.6fr 1fr 96px 120px 150px 200px; gap:14px; padding-left:20px; padding-right:20px; }
+  .t-act .stl { display:none; }
+}
+
+/* ---------- Телефон ---------- */
+@media (max-width: 900px) {
+  .wrap { padding:0 16px; }
+  section { padding:64px 0; }
+  nav.menu, .top .phone { display:none; }
+  header.top .wrap { height:64px; justify-content:space-between; }
+  .logo { font-size:28px; }
+  .lhero { padding:32px 0 48px; }
+  .lhero .wrap { grid-template-columns:1fr; gap:36px; }
+  .crumbs { font-size:20px; }
+  .lhero h1 { font-size:calc((100vw - 32px) / 3.1); }
+  .lhero p.lead { font-size:17px; margin-top:20px; }
+  .next { padding:20px 16px 20px; }
+  .next .title { font-size:44px; }
+  .next .when { font-size:22px; }
+  .flap b { width:30px; height:42px; font-size:34px; }
+  .cd .sep { font-size:34px; line-height:42px; margin-top:20px; }
+  .next-f .btn { width:100%; }
+  .tour-h { flex-direction:column; align-items:flex-start; }
+  .filters { align-items:flex-start; width:100%; }
+  .seg { width:100%; } .seg button { flex:1; padding:0 8px; }
+  .chips { justify-content:flex-start; }
+  .thead { display:none; }
+  .trow { grid-template-columns:1fr auto; gap:12px 16px; padding:20px 16px; }
+  .t-date { grid-column:1; font-size:34px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .t-date span { display:inline; }
+  .t-status { grid-column:2; grid-row:1; align-self:start; }
+  .t-name { grid-column:1/-1; font-size:26px; }
+  .t-fmt { grid-column:1; }
+  .t-stack { grid-column:2; text-align:right; font-size:24px; }
+  .t-seats { grid-column:1/-1; }
+  .t-act { grid-column:1/-1; justify-content:stretch; }
+  .t-act .btn { flex:1; }
+  .t-act .stl { display:inline-flex; }
+  .tgrid { grid-template-columns:1fr; }
+  .tcard.cta h3 { font-size:48px; }
+  .rate .wrap { grid-template-columns:1fr; gap:40px; }
+  .rrow { grid-template-columns:44px 1fr 84px; gap:10px; }
+  .rrow .n { display:none; }
+  .rrow .pl { font-size:34px; }
+  .rrow .nm { font-size:22px; }
+  .rrow .nm span { display:block; margin:4px 0 0; font-size:16px; }
+  .rrow .pt { font-size:28px; }
+  .points { position:static; padding:24px 20px; }
+  .rules .grid { grid-template-columns:1fr; }
+  .rule, .rule + .rule { padding:24px 0; border-left:0; border-bottom:1px solid var(--line); }
+  .rule .n { font-size:72px; }
+  .ticket { grid-template-columns:1fr; }
+  .ticket .main { padding:28px 20px 8px; }
+  .ticket h3 { font-size:44px; }
+  .f { grid-template-columns:1fr; }
+  .ticket .stub { border-left:0; border-top:2px dashed var(--muted-paper); padding:20px; }
+  footer .vk { margin-left:0; }
+  .age { font-size:72px; }
+  .pols { grid-template-columns:1fr 1fr; gap:22px 18px; margin-top:40px; }
+  .pol { padding:8px 8px 0; } .pol figcaption { font-size:18px; padding:8px 0 10px; }
+  .pol::before { width:64px; margin-left:-32px; height:20px; top:-10px; }
+  .book .wrap { grid-template-columns:1fr; gap:40px; }
+  .contacts dl { grid-template-columns:1fr; gap:2px; } .contacts dd { margin-bottom:12px; }
+  .okstamp { position:static; margin:0 auto; width:112px; height:112px; font-size:22px; }
+  .stamp { width:96px; height:96px; right:0; top:-14px; }
+  .stamp::before { inset:5px; } .stamp::after { inset:-5px; border-width:2px; }
+  .stamp .s1 { font-size:11px; } .stamp .s2 { font-size:30px; } .stamp .s3 { font-size:13px; }
+  .burger { display:block; }
+  header.top { position:relative; z-index:20; }
+  header.top .wrap { gap:12px; }
+  .logo { margin-right:auto; }
+  header.top.open nav.menu { display:flex; position:absolute; left:0; right:0; top:64px; background:var(--bg); border-bottom:1px solid var(--line);
+    flex-direction:column; gap:0; padding:8px 16px 16px; font-size:30px; }
+  header.top.open nav.menu a { padding:10px 0; border-top:1px solid var(--line); }
+  header.top.open nav.menu a:first-child { border-top:0; }
+  .guide { padding:56px 0 72px; }
+  table.g { font-size:13px; } table.g th, table.g td { padding:8px; }
+  .gt { overflow-x:auto; }
+}
+
+/* ---------- Билеты (бронь и запись на турнир): корешок отрывается по перфорации ---------- */
+/* фон и вырезы переезжают с билета на его половинки, чтобы корешок мог уехать */
+.tear { background:none; -webkit-mask:none; mask:none; }
+.tear .main, .tear .stub { background:var(--paper); -webkit-mask:var(--m); mask:var(--m); -webkit-mask-composite:source-in; mask-composite:intersect; }
+.tear .main { border-radius:14px 0 0 14px; --m:radial-gradient(circle 18px at 0 50%, #0000 98%, #000); }
+.tear .stub { border-radius:0 14px 14px 0; --m:radial-gradient(circle 18px at 100% 50%, #0000 98%, #000);
+  transform-origin:0 100%; --t1:translateX(-3px) rotate(-.8deg); --t2:translateX(2px) rotate(.6deg); --tw:translateX(3px) rotate(3.5deg); --tf:translate(22px, 14px) rotate(3deg); }
+/* рваный край вместо пунктира */
+.tear.torn .main { --m:radial-gradient(circle 18px at 0 50%, #0000 98%, #000), conic-gradient(from -135deg at right, #000 90deg, #0000 0) right / 100% 10px repeat-y; }
+.tear.torn .stub { --m:radial-gradient(circle 18px at 100% 50%, #0000 98%, #000), conic-gradient(from 45deg at left, #000 90deg, #0000 0) left 0 top 5px / 100% 10px repeat-y;
+  border-left-color:transparent; border-top-color:transparent; transform:var(--tf); }
+.tear.sent:not(.torn) .okstamp { visibility:hidden; }
+.js .tear.tearing .stub { animation:tear .9s cubic-bezier(.3,.7,.3,1) both; }
+.js .tear.tearing .main { animation:recoil .5s ease .28s both; }
+.js .tear.sent .ok { animation:rise .5s cubic-bezier(.2,.8,.2,1) both; }
+.js .tear.tearing .okstamp { animation:stamp .5s cubic-bezier(.2,1.6,.4,1) .95s both; }
+@keyframes tear { 0% { transform:none; } 12% { transform:var(--t1); } 24% { transform:var(--t2); } 34% { transform:none; } 62% { transform:var(--tw); } 100% { transform:var(--tf); } }
+@keyframes recoil { 40% { transform:translateX(-5px) rotate(-.4deg); } }
+.again-b { margin-top:18px; background:none; border:0; padding:0; color:var(--muted-paper); font:500 13px/1.4 "IBM Plex Mono", monospace; text-decoration:underline; cursor:pointer; }
+@media (max-width: 900px) {
+  .tear .main { border-radius:14px 14px 0 0; --m:radial-gradient(circle 14px at 0 100%, #0000 98%, #000), radial-gradient(circle 14px at 100% 100%, #0000 98%, #000); }
+  .tear .stub { border-radius:0 0 14px 14px; --m:radial-gradient(circle 14px at 0 0, #0000 98%, #000), radial-gradient(circle 14px at 100% 0, #0000 98%, #000);
+    transform-origin:100% 0; --t1:translateY(-3px) rotate(.6deg); --t2:translateY(2px) rotate(-.5deg); --tw:rotate(-3deg); --tf:translate(-6px, 20px) rotate(-2.5deg); }
+  .tear.torn { margin-bottom:24px; }
+  .tear.torn .main { --m:radial-gradient(circle 14px at 0 100%, #0000 98%, #000), radial-gradient(circle 14px at 100% 100%, #0000 98%, #000), conic-gradient(from -45deg at bottom, #000 90deg, #0000 0) bottom / 10px 100% repeat-x; }
+  .tear.torn .stub { --m:radial-gradient(circle 14px at 0 0, #0000 98%, #000), radial-gradient(circle 14px at 100% 0, #0000 98%, #000), conic-gradient(from 135deg at top, #000 90deg, #0000 0) left 5px top 0 / 10px 100% repeat-x; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js:not(.fm) .tear.tearing .stub, html.js:not(.fm) .tear.tearing .main, html.js:not(.fm) .tear.sent .ok, html.js:not(.fm) .tear.tearing .okstamp { animation:none; }
+}
+.tear .stub { position:relative; }
+dialog { overflow:auto; padding:16px 44px 44px 16px; max-width:min(920px, calc(100vw - 8px)); max-height:calc(100dvh - 8px); }
+
+/* ---------- Первый экран: заголовок и штамп в одну строку, размер от ширины колонки ---------- */
+/* штамп стоит рядом с «Лобби» и никогда на него не заезжает; всё масштабируется вместе */
+.lhero .rv:first-child { container-type:inline-size; min-width:0; }
+.lhero .ttl { display:flex; align-items:flex-start; gap:.1em; font-size:min(216px, 12vw); font-size:min(216px, calc((100cqw - 24px) / 3.35)); }
+.lhero .ttl h1 { font-size:1em; white-space:nowrap; flex:none; }
+.lhero .ttl .stamp { position:relative; right:auto; top:auto; flex:none; width:.78em; height:.78em; margin:-.1em 0 0 .04em; font-size:inherit; }
+.lhero .ttl .stamp::before { inset:.04em; }
+.lhero .ttl .stamp::after { inset:-.04em; border-width:max(2px, .014em); }
+.lhero .ttl .stamp .s1 { font-size:.088em; } .lhero .ttl .stamp .s2 { font-size:.24em; } .lhero .ttl .stamp .s3 { font-size:.1em; }
+.x { z-index:3; }
+@media (max-width: 900px) {
+  /* панель превью на телефоне не липнет к экрану и листается вбок, чтобы не закрывать страницу */
+  .pv { position:relative; }
+  .pv .in { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; }
+  .pv .in > * { flex:none; }
+  .pv .links { margin-left:12px; }
+}
+@media (max-width: 1180px) {
+  /* табло турниров: на планшете и узком ноутбуке строка становится карточкой, чтобы кнопки не уезжали за край */
+  .thead { display:none; }
+  .trow { grid-template-columns:1fr auto; gap:12px 16px; padding:20px 16px; }
+  .t-date { grid-column:1; font-size:34px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .t-date span { display:inline; }
+  .t-status { grid-column:2; grid-row:1; align-self:start; }
+  .t-name { grid-column:1/-1; font-size:26px; }
+  .t-fmt { grid-column:1; }
+  .t-stack { grid-column:2; text-align:right; font-size:24px; }
+  .t-seats { grid-column:1/-1; }
+  .t-act { grid-column:1/-1; justify-content:stretch; }
+  .t-act .btn { flex:1; }
+  .t-act .stl { display:inline-flex; }
+}
+@media (max-width: 1180px) {
+  /* столы: два стола в ряд, приглашение «Хотите за стол?» на всю ширину под ними */
+  .tgrid { grid-template-columns:1fr 1fr; }
+  .tcard.cta { grid-column:1/-1; }
+}
+@media (max-width: 680px) {
+  .tgrid { grid-template-columns:1fr; }
+}
+.tstats span { white-space:nowrap; }
+@media (max-width: 400px) {
+  .tcard { padding:20px 16px; }
+  .tstats b { font-size:26px; }
+  .tstats span { font-size:12px; letter-spacing:.06em; }
+  .tstats div + div { padding-left:10px; }
+}
+@media (max-width: 1180px) {
+  /* рейтинг и бронь: на узком ноутбуке и планшете в одну колонку, чтобы имена и поля не сжимались */
+  .rate .wrap { grid-template-columns:1fr; gap:40px; }
+  .points { position:static; }
+  .book .wrap { grid-template-columns:1fr; gap:48px; }
+  .book .ticket { max-width:860px; }
+}
+@media (max-width: 900px) {
+  .pols { max-width:620px; margin-left:auto; margin-right:auto; padding:0 8px; }
+}
+.top .phone { white-space:nowrap; }
+@media (max-width: 1100px) { .top .phone { display:none; } .top .btn { margin-left:auto; } }
+/* штамп на оторванном корешке встаёт на место пояснения и ничего не перекрывает */
+.tear.sent .stub > .mono { display:none; }
+.tear .okstamp { position:static; margin:6px auto 4px; }
+#toLanding { display:none; }
+</style>
+</head>
+<body data-p="1">
+<script>document.documentElement.classList.add('js');
+/* превью: анимации показываем, даже если в системе включено «уменьшить движение»; переключатель в верхней панели */
+try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElement.classList.add('fm'); }catch(e){ document.documentElement.classList.add('fm'); }</script>
+
+<div class="pv"><div class="in">
+  <span>Вариант:</span>
+  <button data-set="1"><i style="background:#E8352B"></i>1 · Красный штамп</button>
+  <button data-set="2"><i style="background:#C9973F"></i>2 · Бордо и латунь</button>
+  <button data-set="3"><i style="background:#E8642C"></i>3 · Табачный зелёный</button>
+  <button data-set="4"><i style="background:#FF5A36"></i>4 · Ночной ультрамарин</button>
+  <button data-set="5"><i style="background:#EFE6D2;outline:1px solid #888"></i>5 · Светлый</button>
+  <button class="tourb" id="tourBtn">▶ Показать анимации</button><button id="motionBtn"></button>
+  <span class="links"><a id="toLanding" href="../preview/soprano-landing.html">← Лендинг</a><a href="#guide">Гайдлайн ↓</a></span>
+</div></div>
+
+<!-- Шапка -->
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">СОПРАНО</a>
+  <nav class="menu it" id="menu"><a href="#tour">турниры</a><a href="#tables">столы</a><a href="#rating">рейтинг</a><a href="#hall">зал</a><a href="#book">бронь</a></nav>
+  <a class="phone" href="tel:+79209041656">8 920 904-16-56</a>
+  <a class="btn btn-acc btn-sm" href="#book">Бронь</a>
+  <button class="burger" aria-label="Меню" aria-expanded="false" aria-controls="menu"><i></i></button>
+</div></header>
+
+<!-- 1. Первый экран: заголовок + ближайший турнир -->
+<section class="lhero" id="top"><div class="wrap">
+  <div class="rv">
+    <div class="crumbs it"><a href="#top">Сопрано</a> / <b>покер-рум</b></div>
+    <div class="ttl"><h1>Лобби</h1>
+    <div class="stamp" aria-label="Открыто до 03:00"><div><div class="s1">открыто до</div><div class="s2">03:00</div><div class="s3 it">сегодня</div></div></div></div>
+    <p class="lead">Расписание турниров, свободные места за столами и рейтинг сезона. Играем <em>на фишки и очки</em>, без денежных ставок. Только 18+.</p>
+  </div>
+  <div class="next rv">
+    <div class="next-h"><h3>Ближайший турнир</h3><span class="mono">обновлено 21:47</span></div>
+    <div class="title">Покерный вечер</div>
+    <div class="when it">среда, 15 октября · 19:00 · фриз-аут</div>
+    <div class="cd" aria-label="До начала">
+      <div class="u"><div class="flap" id="cdD"><b>0</b><b>0</b></div><span>дней</span></div><div class="sep">:</div>
+      <div class="u"><div class="flap" id="cdH"><b>0</b><b>0</b></div><span>часов</span></div><div class="sep">:</div>
+      <div class="u"><div class="flap" id="cdM"><b>0</b><b>0</b></div><span>минут</span></div>
+    </div>
+    <div class="next-f">
+      <div class="seats-l"><div class="flap pk" data-v="06" id="nextSeats"><b>0</b><b>6</b></div><div class="lbl">мест<br>из 18</div></div>
+      <button class="btn btn-poker" data-join="t2">Записаться</button>
+    </div>
+  </div>
+</div></section>
+
+<!-- 2. Турниры -->
+<section class="tour" id="tour"><div class="wrap">
+  <div class="tour-h rv">
+    <div><h2 class="big">Турниры</h2><div class="it">выберите вечер и займите место</div></div>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Период">
+        <button data-per="today">Сегодня</button><button data-per="week" aria-pressed="true">Неделя</button><button data-per="month">Месяц</button>
+      </div>
+      <div class="chips" role="group" aria-label="Формат">
+        <button data-fmt="all" aria-pressed="true">Все</button><button data-fmt="freeze">Фриз-аут</button><button data-fmt="rebuy">Ребай</button><button data-fmt="sng">Сит-энд-гоу</button><button data-fmt="learn">Обучение</button>
+      </div>
+    </div>
+  </div>
+  <div class="tboard rv">
+    <div class="thead"><div>Дата</div><div>Турнир</div><div>Формат</div><div>Стек</div><div>Мест</div><div>Статус</div><div></div></div>
+    <div id="tlist"></div>
+  </div>
+  <p class="mono" style="color:var(--muted);margin-top:14px">Форматы, стеки и число мест — демо <span class="todo">[уточнить у заказчика]</span></p>
+</div></section>
+
+<!-- 3. Столы сейчас -->
+<section class="tables" id="tables"><div class="wrap">
+  <div class="tables-h rv"><h2 class="mid">Столы сейчас</h2><div class="it">сегодня · обучающий вечер, уровень 4</div></div>
+  <div class="tgrid rv">
+    <div class="tcard">
+      <div class="tcard-h"><h3>Стол 1<span>основной, 9 мест</span></h3><span class="badge b-live">идёт игра</span></div>
+      <div class="mini" data-seats="111101101" data-button="4" data-board="K♠ 7♥ 2♦" data-pot="2 400" role="img" aria-label="Стол 1: заняты места 1, 2, 3, 4, 6, 7, 9; свободны 5 и 8; кнопка дилера у места 4"></div>
+      <div class="mini-key"><span><i></i>игрок</span><span><i class="f"></i>свободно</span><span><i class="d"></i>кнопка дилера</span><button class="again" type="button">↻ раздать</button></div>
+      <div class="tstats"><div><b>7/9</b><span>за столом</span></div><div><b>100/200</b><span>блайнды</span></div><div><b>12:40</b><span>до уровня</span></div></div>
+      <a class="btn btn-ghost btn-sm" href="#" title="Страница стола — в прототипе">Стол →</a>
+    </div>
+    <div class="tcard">
+      <div class="tcard-h"><h3>Стол 2<span>у окна, 9 мест</span></h3><span class="badge b-live">идёт игра</span></div>
+      <div class="mini" data-seats="101110110" data-button="7" data-board="A♣ 10♦ 10♠ 4♥" data-pot="3 100" role="img" aria-label="Стол 2: заняты места 1, 3, 4, 5, 7, 8; свободны 2, 6 и 9; кнопка дилера у места 7"></div>
+      <div class="mini-key"><span><i></i>игрок</span><span><i class="f"></i>свободно</span><span><i class="d"></i>кнопка дилера</span><button class="again" type="button">↻ раздать</button></div>
+      <div class="tstats"><div><b>6/9</b><span>за столом</span></div><div><b>100/200</b><span>блайнды</span></div><div><b>12:40</b><span>до уровня</span></div></div>
+      <a class="btn btn-ghost btn-sm" href="#" title="Страница стола — в прототипе">Стол →</a>
+    </div>
+    <div class="tcard cta">
+      <div><h3>Хотите<br>за стол?</h3></div>
+      <p>Сегодняшний турнир уже идёт. Ближайшие свободные места — в среду, 15 октября, в 19:00. Новичкам дилер объяснит правила.</p>
+      <button class="btn btn-sm" data-join="t2">Записаться на среду</button>
+    </div>
+  </div>
+</div></section>
+
+<!-- 4. Рейтинг сезона -->
+<section class="rate" id="rating"><div class="wrap">
+  <div class="rv">
+    <div class="head"><h2 class="big">Рейтинг<br>сезона</h2><div class="it">осень · сентябрь — ноябрь · после 14 турниров</div></div>
+    <div class="rtable">
+      <div class="rrow h"><div>#</div><div>Игрок</div><div class="n">Игр</div><div class="n">Лучшее</div><div class="pt">Очки</div></div>
+      <div class="rrow top"><div class="pl">1</div><div class="nm">Алексей К.<span>трижды первый</span></div><div class="n">12</div><div class="n">1</div><div class="pt">412</div></div>
+      <div class="rrow top"><div class="pl">2</div><div class="nm">Марина Д.</div><div class="n">13</div><div class="n">1</div><div class="pt">368</div></div>
+      <div class="rrow top"><div class="pl">3</div><div class="nm">Игорь С.</div><div class="n">11</div><div class="n">2</div><div class="pt">341</div></div>
+      <div class="rrow"><div class="pl">4</div><div class="nm">Денис П.</div><div class="n">14</div><div class="n">2</div><div class="pt">298</div></div>
+      <div class="rrow"><div class="pl">5</div><div class="nm">Ольга В.</div><div class="n">9</div><div class="n">1</div><div class="pt">276</div></div>
+      <div class="rrow"><div class="pl">6</div><div class="nm">Тимур А.</div><div class="n">12</div><div class="n">3</div><div class="pt">241</div></div>
+      <div class="rrow"><div class="pl">7</div><div class="nm">Сергей Н.</div><div class="n">10</div><div class="n">2</div><div class="pt">219</div></div>
+      <div class="rrow"><div class="pl">8</div><div class="nm">Анна Л.<span>новичок сезона</span></div><div class="n">6</div><div class="n">2</div><div class="pt">187</div></div>
+      <div class="rrow"><div class="pl">9</div><div class="nm">Павел Р.</div><div class="n">11</div><div class="n">4</div><div class="pt">164</div></div>
+      <div class="rrow"><div class="pl">10</div><div class="nm">Кирилл М.</div><div class="n">8</div><div class="n">3</div><div class="pt">152</div></div>
+    </div>
+    <a class="more" href="#" title="Полный рейтинг — отдельная страница">Весь рейтинг →</a>
+  </div>
+  <aside class="points rv">
+    <h3>Как считаем очки</h3>
+    <div class="it">за каждое место в турнире</div>
+    <div class="prow"><span>1 место</span><b>50</b></div>
+    <div class="prow"><span>2 место</span><b>35</b></div>
+    <div class="prow"><span>3 место</span><b>25</b></div>
+    <div class="prow"><span>4–9 место</span><b>10</b></div>
+    <div class="prow"><span>Участие</span><b>5</b></div>
+    <p>Первые 18 по очкам играют финал недели. Призы сезона — от клуба, не денежные. Таблица очков — пример <span class="todo">[уточнить]</span>.</p>
+  </aside>
+</div></section>
+
+<!-- 5. Правила коротко -->
+<section class="rules"><div class="wrap">
+  <h2 class="mid rv">Как у нас играют</h2>
+  <div class="grid rv">
+    <div class="rule"><div class="n">01</div><h3>Спортивный формат</h3><p>Играем на фишки и очки рейтинга. Денежных ставок и выплат нет.</p></div>
+    <div class="rule"><div class="n">02</div><h3>Только 18+</h3><p>На входе попросим документ. Записаться можно на сайте или по телефону.</p></div>
+    <div class="rule"><div class="n">03</div><h3>Новичкам рады</h3><p>Дилер объяснит правила перед стартом, а по вторникам идёт обучающий вечер.</p></div>
+  </div>
+</div></section>
+
+<!-- 6. Зал -->
+<section class="hall" id="hall"><div class="wrap">
+  <h2 class="big rv">Зал</h2>
+  <div class="pols rv">
+    <figure class="pol"><div class="ph it">фото зала<br>[уточнить]</div><figcaption class="it">основной зал</figcaption></figure>
+    <figure class="pol"><div class="ph it">фото стола<br>[уточнить]</div><figcaption class="it">покерный стол</figcaption></figure>
+    <figure class="pol"><div class="ph it">фото VIP<br>[уточнить]</div><figcaption class="it">VIP-комната</figcaption></figure>
+    <figure class="pol"><div class="ph it">фото бара<br>[уточнить]</div><figcaption class="it">бар и сцена</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- 7. Бронь + контакты -->
+<section class="book" id="book"><div class="wrap">
+  <form class="ticket tear rv" id="bform" novalidate>
+    <div class="main">
+      <h3>Бронь стола</h3>
+      <div class="it">перезвоним и подтвердим за 10 минут</div>
+      <div class="form f">
+        <div><label class="fl">Имя<input type="text" name="name" placeholder="Как к вам обращаться" autocomplete="given-name"></label></div>
+        <div><label class="fl">Телефон<input type="tel" name="tel" placeholder="+7 ___ ___-__-__" inputmode="tel" autocomplete="tel"></label></div>
+        <div><label class="fl">Дата<input type="text" name="date" placeholder="15.10"></label></div>
+        <div><label class="fl">Время<input type="text" name="time" placeholder="19:00"></label></div>
+        <div class="full"><label class="fl">Гостей<select name="guests"><option>2</option><option>4</option><option>6</option><option>8+</option></select></label></div>
+        <label class="chk full"><input type="checkbox" name="pd">Согласен на обработку персональных данных</label>
+        <div class="err" id="berr" aria-live="polite"></div>
+      </div>
+      <div class="ok"><h3>Стол<br>за вами</h3><p>Заявка принята. Перезвоним в течение 10 минут и подтвердим бронь.</p><button type="button" class="again-b">оформить ещё одну бронь</button></div>
+    </div>
+    <div class="stub">
+      <div><div class="mono">билет</div><div class="no">№ 0157</div></div>
+      <div class="okstamp">принято<small>ждём вас</small></div>
+      <div class="mono">только 18+<br>покер без денежных ставок</div>
+      <button class="btn btn-acc" type="submit">Забронировать</button>
+    </div>
+  </form>
+  <div class="contacts rv">
+    <h2 class="big">Контакты</h2>
+    <dl>
+      <dt>Адрес</dt><dd>Александров, ул. Ленина, 68/1 <span class="todo">[уточнить]</span></dd>
+      <dt>Бронь</dt><dd><a href="tel:+79209041656">8 920 904-16-56</a><br><a href="tel:+79040385528">8 904 038-55-28</a></dd>
+      <dt>Часы</dt><dd>пн–чт 17:00–01:00<br>пт–вс 17:00–03:00</dd>
+    </dl>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="age">18+</div>
+  <p>Только для гостей старше 18 лет. Покер в клубе спортивный: игра на фишки и рейтинг, без денежных ставок.</p>
+  <a class="vk" href="#">ВКонтакте →</a>
+</div></footer>
+
+<!-- Модалка записи -->
+<dialog id="join" aria-label="Запись на турнир">
+  <form class="ticket tear" id="jform" method="dialog" novalidate>
+    <button type="button" class="x" aria-label="Закрыть" data-close>×</button>
+    <div class="main">
+      <h3>Запись<br>на турнир</h3>
+      <div class="it">администратор перезвонит и подтвердит место</div>
+      <div class="form f">
+        <div><label class="fl">Имя<input type="text" name="name" placeholder="Как к вам обращаться" autocomplete="given-name"></label></div>
+        <div><label class="fl">Телефон<input type="tel" name="tel" placeholder="+7 ___ ___-__-__" inputmode="tel" autocomplete="tel"></label></div>
+        <div class="full"><label class="fl">Ник для рейтинга<input type="text" name="nick" placeholder="Как подписать вас в таблице"></label></div>
+        <label class="chk full"><input type="checkbox" name="age">Мне есть 18 лет</label>
+        <label class="chk full"><input type="checkbox" name="pd">Согласен на обработку персональных данных</label>
+        <div class="err" id="jerr" aria-live="polite"></div>
+      </div>
+      <div class="ok"><h3>Место<br>за вами</h3><p>Мы записали вас на турнир. Администратор перезвонит и подтвердит. Возьмите документ: вход только 18+.</p></div>
+    </div>
+    <div class="stub">
+      <div><div class="mono">турнир</div><div class="ev" id="jev">Покерный вечер<span>15.10 · 19:00</span></div></div>
+      <div class="okstamp">записан<small>ждём к началу</small></div>
+      <div class="mono">стек на входе<br>игра на фишки, без денежных ставок</div>
+      <button class="btn btn-acc" type="submit">Записаться</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Гайдлайн лобби -->
+<div class="guide" id="guide"><div class="wrap">
+  <h2 id="gTitle">Гайдлайн</h2>
+  <div class="sub">Основа — лобби покер-рума; «Зал» и «Бронь + Контакты» перенесены с лендинга. Цвета, шрифты, сетка и кнопки общие с лендингом.</div>
+
+  <h3>Цвета</h3>
+  <div class="sw" id="gColors"></div>
+
+  <h3>Новые компоненты</h3>
+  <div class="gt"><table class="g">
+    <tr><th>Компонент</th><th>Устройство</th><th>Размеры, px (1440 / 390)</th></tr>
+    <tr><td>Карточка «Ближайший турнир»</td><td>фон «Табло», верхняя линия 3 px цветом «Покер», обратный отсчёт плитками сплит-флэп</td><td>название 56 / 44 · плитки 40×54 / 30×42</td></tr>
+    <tr><td>Фильтр периода</td><td>сегмент без скруглений; активный — заливка «Бумага», текст «Фон»</td><td>высота 44 · Sofia Bold 20, КАПС</td></tr>
+    <tr><td>Фильтр формата</td><td>чипы-обводки 1,5 px «Линии»; активный — обводка и текст «Покер»</td><td>высота 36 · Sofia Bold 17</td></tr>
+    <tr><td>Табло турниров</td><td>7 колонок: дата · турнир · формат · стек · места · статус · кнопки; на телефоне строка становится карточкой</td><td>дата 40 / 34 · название 28 / 26 · строка 20 сверху и снизу</td></tr>
+    <tr><td>Статусы</td><td>«запись идёт» — обводка светлым 40%; «последние места» — акцент; «идёт игра» — заливка «Покер» с мигающей точкой; «по рейтингу» — обводка «Покер»; «завершён» — серый, строка 50%</td><td>высота 30 · Sofia Bold 16, разрядка 8%</td></tr>
+    <tr><td>Карточка стола</td><td>стол сверху: борт цветом «Плитки цифр», сукно — «Покер» 16% на «Фоне табло», пунктирная линия ставок, общие карты и банк в центре. Дилер в центре нижней стороны, 9 мест за бортом по часовой стрелке от его левой руки: занятое — круг «Бумага» с номером, перед ним две карты рубашкой и стопка фишек (ребро на 40% темнее, вставки по краю, кольцо на верхней); блайнды — 1 и 2 фишки за линией ставок; свободное — пунктир. Кнопка D — на сукне перед игроком</td><td>стол 320×160, место Ø 28, карта 14×20 · цифры 32</td></tr>
+    <tr><td>Рейтинг</td><td>на «бумаге», пунктир 8 / 6 как в афише, первая тройка — цифры цветом «Покер»</td><td>место 44 / 34 · имя 28 / 22 · очки 34 / 28</td></tr>
+    <tr><td>Модалка записи</td><td>билет как форма брони: вырезы по бокам, корешок с турниром, две обязательные галочки (18+ и согласие на данные)</td><td>скругление 14 · ширина до 860</td></tr>
+  </table></div>
+
+  <h3>Анимации</h3>
+  <div class="gt"><table class="g">
+    <tr><th>Где</th><th>Что происходит</th><th>Время</th></tr>
+    <tr><td>Первый экран</td><td>заголовок «Лобби» выезжает снизу; штамп «открыто до 03:00» опускается с эффектом штамповки</td><td>0,8 с · штамп 0,55 с с задержкой 0,6 с</td></tr>
+    <tr><td>Ближайший турнир</td><td>цифры отсчёта и свободных мест перещёлкиваются, как на вокзальном табло; отсчёт обновляется раз в 15 с</td><td>85 мс на щелчок</td></tr>
+    <tr><td>Табло турниров</td><td>строки выезжают слева по очереди — при загрузке и при каждом переключении фильтра</td><td>0,45 с, шаг 70 мс</td></tr>
+    <tr><td>Столы сейчас — сцена «раздача»</td><td>когда стол появляется на экране: стопки фишек падают, блайнды ставятся за линию, кнопка D появляется, дилер раздаёт по две карты по часовой стрелке, затем открываются общие карты и банк. Клик по столу или «↻ раздать» — заново</td><td>≈ 3 с на всю раздачу</td></tr>
+    <tr><td>Рейтинг сезона</td><td>очки набегают от нуля, сверху вниз</td><td>0,9 с, шаг 70 мс</td></tr>
+    <tr><td>Зал</td><td>полароиды плывут с разной скоростью при прокрутке (параллакс), при наведении выпрямляются</td><td>смещение до ±40 px</td></tr>
+    <tr><td>Бронь и запись на турнир</td><td>после отправки билет сжимается до сообщения «Стол за вами», корешок дёргается и отрывается по перфорации (на компьютере уходит вправо, на телефоне вниз), край становится рваным, на корешок падает штамп «принято» (на турнире «записан»)</td><td>0,45 с сжатие · 0,9 с отрыв · штамп через 0,95 с</td></tr>
+    <tr><td>Все блоки</td><td>плавно проявляются при прокрутке. На сайте при «уменьшить движение» в системе всё отключается, контент сразу на месте. В превью анимации включены всегда; выключить их можно кнопкой «Анимации» в верхней панели, а «▶ Показать анимации» проезжает по странице и запускает каждую по очереди</td><td>0,7 с</td></tr>
+  </table></div>
+
+  <h3>Статусы и кнопки</h3>
+  <div class="specimen">
+    <span class="badge b-open">запись идёт</span><span class="badge b-last">последние места</span><span class="badge b-live">идёт игра</span><span class="badge b-rank">по рейтингу</span><span class="badge b-done">завершён</span>
+    <a class="btn btn-poker btn-sm">Записаться</a><a class="btn btn-ghost btn-sm">Стол →</a>
+  </div>
+  <p class="sub" style="margin-top:14px">Работает в превью: фильтры, обратный отсчёт, запись на турнир и бронь стола с проверкой полей (никуда не отправляется), мобильное меню.</p>
+</div></div>
+
+<script>
+const P = {
+  1:{n:'1 · Красный штамп', c:['#0C0B0A','#F2E8D5','#14110D','#E8352B','#F2E8D5','#E8352B','#6F89FF','#8C857A','#2B2823','#151310','#22201B','#5E574C']},
+  2:{n:'2 · Бордо и латунь', c:['#140C0D','#EFE3CF','#1C1012','#C9973F','#140C0D','#8E2234','#D9A54A','#94867C','#2E2224','#1C1214','#2A1B1E','#6B5A50']},
+  3:{n:'3 · Табачный зелёный', c:['#0F1A15','#EDE4CF','#13201A','#E8642C','#0F1A15','#E8642C','#7CC39C','#8B9A90','#24332B','#14221B','#1D2E25','#56645B']},
+  4:{n:'4 · Ночной ультрамарин', c:['#0A0D1C','#ECE8DE','#0E1226','#FF5A36','#0A0D1C','#3A5BFF','#8EA2FF','#8A8FA8','#22273F','#10142A','#1A1F38','#555A73']},
+  5:{n:'5 · Светлый (инверсия)', c:['#EFE6D2','#14110D','#F2E8D5','#D9301F','#F2E8D5','#D9301F','#2C4BD8','#7A7264','#CFC4AE','#E6DCC6','#D9CEB6','#B8AE9C']}
+};
+const R = ['Фон','Бумага / светлый текст','Текст на бумаге','Акцент (кнопки, штамп, даты)','Текст на кнопке акцента','Курсив на бумаге','Покер (2-й цвет)','Вторичный текст','Линии','Фон табло','Плитки цифр','Вторичный текст на бумаге'];
+function setP(p){
+  if(!P[p]) p='1';
+  document.body.dataset.p=p;
+  document.querySelectorAll('.pv button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.set===p));
+  document.getElementById('gTitle').textContent='Гайдлайн · вариант '+P[p].n;
+  document.getElementById('gColors').innerHTML=P[p].c.map((h,i)=>`<div><span style="background:${h}"></span><p><b>${R[i]}</b><br><code>${h}</code></p></div>`).join('');
+  document.getElementById('toLanding').href='../preview/soprano-landing.html#p'+p;
+  try{ history.replaceState(null,'','#p'+p); }catch(e){}
+}
+document.querySelectorAll('.pv button').forEach(b=>b.onclick=()=>setP(b.dataset.set));
+setP((location.hash.match(/#p([1-5])/)||[])[1]||'1');
+
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('fm');
+
+/* ---- Сплит-флэп ---- */
+function flapTo(el, value, delay=0){
+  const tiles=[...el.children], target=String(value).padStart(tiles.length,'0').split('');
+  if(still){ tiles.forEach((t,i)=>t.textContent=target[i]); return; }
+  tiles.forEach((t,i)=>{ let n=0, steps=5+i*3;
+    const tick=()=>{ t.classList.remove('flip'); void t.offsetWidth; t.classList.add('flip');
+      t.textContent = n<steps-1 ? (Math.random()*10|0) : target[i];
+      if(++n<steps) setTimeout(tick,85); };
+    setTimeout(tick,delay);
+  });
+}
+
+/* ---- Данные турниров (демо) ---- */
+const FMT = {freeze:'Фриз-аут', rebuy:'Ребай', sng:'Сит-энд-гоу', learn:'Обучение'};
+const T = [
+  {id:'t0', d:'2026-10-08', dow:'среда', time:'19:00', name:'Покерный вечер', note:'турнир на рейтинг', fmt:'freeze', stack:'10 000', taken:18, max:18, st:'done'},
+  {id:'t1', d:'2026-10-13', dow:'вторник', time:'19:00', name:'Обучающий вечер', note:'дилер объясняет каждую раздачу', fmt:'learn', stack:'5 000', taken:13, max:18, st:'live'},
+  {id:'t2', d:'2026-10-15', dow:'среда', time:'19:00', name:'Покерный вечер', note:'турнир на рейтинг, стек на входе', fmt:'freeze', stack:'10 000', taken:12, max:18, st:'open'},
+  {id:'t3', d:'2026-10-17', dow:'пятница', time:'22:00', name:'Ночной турнир', note:'ребай до 4 уровня', fmt:'rebuy', stack:'8 000', taken:16, max:18, st:'open'},
+  {id:'t4', d:'2026-10-18', dow:'суббота', time:'16:00', name:'Быстрый стол', note:'один стол, 9 игроков', fmt:'sng', stack:'5 000', taken:4, max:9, st:'open'},
+  {id:'t5', d:'2026-10-19', dow:'воскресенье', time:'18:00', name:'Финал недели', note:'играют первые 18 по рейтингу', fmt:'freeze', stack:'15 000', taken:18, max:18, st:'rank'},
+  {id:'t6', d:'2026-10-22', dow:'среда', time:'19:00', name:'Покерный вечер', note:'турнир на рейтинг', fmt:'freeze', stack:'10 000', taken:3, max:18, st:'open'},
+  {id:'t7', d:'2026-10-24', dow:'суббота', time:'22:00', name:'Ночной турнир', note:'ребай до 4 уровня', fmt:'rebuy', stack:'8 000', taken:0, max:18, st:'open'}
+];
+const TODAY='2026-10-13', WEEK_END='2026-10-19';
+let per='week', fmt='all';
+const ddmm = d => d.slice(8,10)+'.'+d.slice(5,7);
+function status(t){
+  if(t.st==='done') return '<span class="badge b-done">завершён</span>';
+  if(t.st==='live') return '<span class="badge b-live">идёт игра</span>';
+  if(t.st==='rank') return '<span class="badge b-rank">по рейтингу</span>';
+  return (t.max-t.taken)<=3 ? '<span class="badge b-last">последние места</span>' : '<span class="badge b-open">запись идёт</span>';
+}
+function render(){
+  const list=T.filter(t=> (per==='today'? t.d===TODAY : per==='week'? (t.d>=TODAY && t.d<=WEEK_END) : true) && (fmt==='all'||t.fmt===fmt));
+  const el=document.getElementById('tlist');
+  if(!list.length){ el.innerHTML='<div class="empty it">В этот период таких турниров нет. Попробуйте другой формат или месяц.</div>'; return; }
+  el.innerHTML=list.map((t,idx)=>{
+    const free=t.max-t.taken, can=t.st==='open' && free>0;
+    return `<div class="trow${t.st==='done'?' done':''}" style="--i:${idx}">
+      <div class="t-date">${ddmm(t.d)}<span>${t.dow}</span><small>${t.time}</small></div>
+      <div class="t-name">${t.name}<span>${t.note}</span></div>
+      <div class="t-fmt"><b>${FMT[t.fmt]}</b>${t.max===9?'1 стол':'2 стола'}</div>
+      <div class="t-stack">${t.stack}<span>фишек</span></div>
+      <div class="t-seats"><div class="flap sm${free<=3&&can?' acc':' pk'}" data-free="${t.id}">${String(free).padStart(2,'0').split('').map(c=>`<b>${c}</b>`).join('')}</div><i>/${t.max}</i></div>
+      <div class="t-status">${status(t)}</div>
+      <div class="t-act">${can?`<button class="btn btn-poker" data-join="${t.id}">Записаться</button>`:''}${t.st!=='done'?`<a class="btn btn-ghost stl" href="#" title="Страница стола — в прототипе">Стол →</a>`:''}</div>
+    </div>`;}).join('');
+}
+document.querySelectorAll('[data-per]').forEach(b=>b.onclick=()=>{ per=b.dataset.per; document.querySelectorAll('[data-per]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{ fmt=b.dataset.fmt; document.querySelectorAll('[data-fmt]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+render();
+
+/* ---- Обратный отсчёт до ближайшего турнира ---- */
+function countdown(first){
+  const ms=Math.max(0, new Date('2026-10-15T19:00:00+03:00') - Date.now());
+  const d=Math.floor(ms/864e5), h=Math.floor(ms/36e5)%24, m=Math.floor(ms/6e4)%60;
+  [['cdD',d],['cdH',h],['cdM',m]].forEach(([id,v],i)=>{ const el=document.getElementById(id);
+    const cur=[...el.children].map(b=>b.textContent).join('');
+    if(first || cur!==String(Math.min(v,99)).padStart(2,'0')) flapTo(el, Math.min(v,99), first?300+i*200:0); });
+}
+countdown(true); setInterval(()=>countdown(false), 15000);
+flapTo(document.getElementById('nextSeats'), 6, 500);
+
+/* ---- Мини-столы: вид сверху, 9 мест + дилер ----
+   Места по часовой стрелке от левой руки дилера (дилер в центре нижней стороны):
+   1 — низ слева, 2–3 — левый торец, 4–6 — верх, 7–8 — правый торец, 9 — низ справа. */
+const SEATS = [[128,224],[30,170],[30,70],[122,16],[200,16],[278,16],[370,70],[370,170],[272,224]];
+const CX = 200, CY = 120;
+// для каждого места: карты (c), стопка игрока (k), ставка блайнда (b), кнопка дилера (d) — всё на сукне перед игроком
+const SPOTS = [
+  {c:[134,170], k:[158,174], b:[146,148], d:[132,146]},
+  {c:[80,152],  k:[102,176], b:[106,136], d:[78,128]},
+  {c:[80,88],   k:[104,84],  b:[106,106], d:[80,112]},
+  {c:[128,70],  k:[152,78],  b:[150,98],  d:[128,94]},
+  {c:[200,70],  k:[226,78],  b:[238,96],  d:[176,74]},
+  {c:[272,70],  k:[248,78],  b:[266,100], d:[272,94]},
+  {c:[320,88],  k:[296,84],  b:[294,106], d:[320,112]},
+  {c:[320,152], k:[298,176], b:[294,136], d:[322,128]},
+  {c:[266,170], k:[242,174], b:[254,148], d:[268,146]}
+];
+const RED = /[♥♦]/;
+// стопка фишек: n штук снизу вверх, цвета по кругу
+const STACKS = [5,3,6,4,5,2,6,4,3], MIX = [['ch-r','ch-r','ch-w'],['ch-b','ch-b','ch-r'],['ch-w','ch-r','ch-b'],['ch-r','ch-b']];
+function stack(x, y, n, cols, d0=0){
+  let o = '';
+  for(let k=0;k<n;k++){ const yy = y - k*3.4, c = cols[k % cols.length];
+    o += `<g class="${c} dp" style="--d:${d0 + k*45}ms"><ellipse class="ch-side" cx="${x}" cy="${yy+2.4}" rx="8.5" ry="3.9"/><ellipse class="ch-top" cx="${x}" cy="${yy}" rx="8.5" ry="3.9"/>`;
+    if(k === n-1) o += `<ellipse class="ch-in" cx="${x}" cy="${yy}" rx="4.8" ry="2.1"/><ellipse class="ch-dot" cx="${x}" cy="${yy}" rx="1.6" ry=".7"/>`;
+    o += `</g>`; }
+  return o;
+}
+function card(x, y, label, rot){
+  const t = `transform="rotate(${rot||0} ${x+7} ${y+10})"`;
+  if(!label) return `<rect class="card-b" x="${x}" y="${y}" width="14" height="20" rx="2" ${t}/>`;
+  return `<g ${t}><rect class="card-f" x="${x}" y="${y}" width="16" height="22" rx="2"/>`+
+    `<text class="rank${RED.test(label)?' red':''}" x="${x+8}" y="${y+10}">${label.slice(0,-1)}</text>`+
+    `<text class="rank${RED.test(label)?' red':''}" x="${x+8}" y="${y+19}">${label.slice(-1)}</text></g>`;
+}
+document.querySelectorAll('.mini').forEach(m=>{
+  const s = m.dataset.seats.split(''), btn = +m.dataset.button, board = (m.dataset.board||'').split(' ').filter(Boolean);
+  let svg = `<svg viewBox="0 0 400 244" aria-hidden="true">`;
+  // хореография раздачи: стопки игроков → блайнды → по две карты от дилера → общие карты
+  const busyOrder = [...Array(9).keys()].map(k => (btn + k) % 9).filter(k => s[k] === '1');
+  const DEAL = 900, STEP = 85, FLOP = DEAL + busyOrder.length * 2 * STEP + 250;
+  const dealt = (i, round) => DEAL + (round * busyOrder.length + busyOrder.indexOf(i)) * STEP;
+  // борт и сукно (стадион 320×160)
+  svg += `<rect class="rail" x="40" y="40" width="320" height="160" rx="80"/>`;
+  svg += `<rect class="rail-in" x="47" y="47" width="306" height="146" rx="73"/>`;
+  svg += `<rect class="felt" x="54" y="54" width="292" height="132" rx="66"/>`;
+  svg += `<rect class="bet" x="78" y="74" width="244" height="92" rx="46"/>`;
+  
+  // общие карты: 5 мест, открытые слева
+  const x0 = CX - (5*16 + 4*4)/2;
+  for(let i=0;i<5;i++){ const x = x0 + i*20;
+    svg += `<rect class="card-slot" x="${x}" y="104" width="16" height="22" rx="2"/>`;
+    if(board[i]) svg += `<g class="fl" style="--d:${FLOP + i*170}ms">${card(x, 104, board[i])}</g>`; }
+  svg += `<text class="pot pp" style="--d:${FLOP - 150}ms" x="${CX}" y="98">банк ${m.dataset.pot||''}</text>`;
+  svg += `<text class="logo-t" x="${CX}" y="154">СОПРАНО</text>`;
+  // дилер — в центре нижней стороны
+  svg += `<rect class="dealer-tab" x="${CX-26}" y="208" width="52" height="20" rx="10"/><text class="dealer-t" x="${CX}" y="222">дилер</text>`;
+  // блайнды: первые два занятых места после кнопки ставят 1 и 2 фишки за линию ставок
+  const order = [...Array(9).keys()].map(k => (btn + k) % 9).filter(k => s[k] === '1');
+  const blinds = {[order[0]]:1, [order[1]]:2};
+  // игроки: стул за бортом, на сукне — две карты и фишки перед игроком
+  s.forEach((v,i)=>{
+    const [x,y] = SEATS[i], busy = v === '1';
+    const P = SPOTS[i];
+    if(busy){
+      [[P.c[0]-15, -8, 0], [P.c[0]-1, 8, 1]].forEach(([cx, rot, r]) => {
+        svg += `<g class="dl" style="--dx:${CX - cx - 7}px;--dy:${214 - P.c[1]}px;--d:${dealt(i, r)}ms">${card(cx, P.c[1]-10, null, rot)}</g>`; });
+      svg += stack(P.k[0], P.k[1], STACKS[i], MIX[i % MIX.length], i * 60);
+      if(blinds[i]) svg += stack(P.b[0], P.b[1], blinds[i], ['ch-b'], 600 + blinds[i] * 120);
+    }
+    if(i+1 === btn) svg += `<g class="pp" style="--d:450ms"><circle class="btn-d" cx="${P.d[0]}" cy="${P.d[1]}" r="7"/><text class="btn-d-t" x="${P.d[0]}" y="${P.d[1]+3}">D</text></g>`;
+    svg += `<g class="${busy?'':'free'}"><circle class="chair" cx="${x}" cy="${y}" r="14"/><text class="chair-n" x="${x}" y="${y+4.5}">${i+1}</text></g>`;
+  });
+  m.innerHTML = svg + `</svg>`;
+});
+
+/* ---- Запуск раздачи: когда стол виден; клик по столу или «раздать» — заново ---- */
+function deal(m){ m.classList.remove('go'); void m.getBoundingClientRect(); m.classList.add('go'); }
+if(!still){
+  const minis = document.querySelectorAll('.mini');
+  minis.forEach(m => m.classList.add('anim'));
+  const tio = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ setTimeout(() => deal(e.target), 250); tio.unobserve(e.target); } }), {threshold:.45}) : null;
+  minis.forEach(m => { tio ? tio.observe(m) : deal(m); m.addEventListener('click', () => deal(m)); });
+  document.querySelectorAll('.mini-key .again').forEach(b => b.onclick = () => deal(b.closest('.tcard').querySelector('.mini')));
+}
+
+/* ---- Билет: сжимается до сообщения, затем корешок отрывается и на него падает штамп ---- */
+function tearTicket(t){
+  if(still){ t.classList.add('sent', 'torn'); return; }
+  const h0 = t.offsetHeight; t.classList.add('sent'); const h1 = t.offsetHeight;
+  t.style.height = h0 + 'px'; t.offsetHeight;
+  t.style.transition = 'height .45s cubic-bezier(.2,.8,.2,1)'; t.style.height = h1 + 'px';
+  setTimeout(() => { t.style.height = t.style.transition = ''; t.classList.add('torn', 'tearing'); }, 480);
+}
+
+/* ---- Запись на турнир ---- */
+const dlg=document.getElementById('join'), form=document.getElementById('jform'), err=document.getElementById('jerr');
+let cur=null;
+document.addEventListener('click', e=>{
+  const b=e.target.closest('[data-join]'); if(!b) return;
+  cur=T.find(t=>t.id===b.dataset.join); if(!cur) return;
+  form.reset(); form.classList.remove('sent', 'torn', 'tearing'); err.textContent='';
+  document.getElementById('jev').innerHTML=`${cur.name}<span>${ddmm(cur.d)} · ${cur.time}</span>`;
+  dlg.showModal ? dlg.showModal() : dlg.setAttribute('open','');
+});
+dlg.querySelector('[data-close]').onclick=()=>dlg.close();
+dlg.addEventListener('click', e=>{ if(e.target===dlg) dlg.close(); });
+form.addEventListener('submit', e=>{
+  e.preventDefault();
+  if(form.classList.contains('sent')){ dlg.close(); return; }
+  const f=form.elements, tel=f.tel.value.replace(/\D/g,'');
+  if(!f.name.value.trim()) { err.textContent='Укажите имя.'; f.name.focus(); return; }
+  if(tel.length<10) { err.textContent='Проверьте телефон: нужно 10–11 цифр.'; f.tel.focus(); return; }
+  if(!f.age.checked) { err.textContent='Турниры только для гостей старше 18 лет.'; return; }
+  if(!f.pd.checked) { err.textContent='Нужно согласие на обработку данных, чтобы мы перезвонили.'; return; }
+  cur.taken=Math.min(cur.max, cur.taken+1);
+  tearTicket(form);
+  render();
+  if(cur.id==='t2') flapTo(document.getElementById('nextSeats'), cur.max-cur.taken);
+});
+
+/* ---- Рейтинг: очки набегают от нуля ---- */
+function countUp(){
+  pts.forEach((p, i) => { const v = +p.dataset.v, t0 = performance.now() + i * 70;
+    const step = now => { const k = Math.min(1, Math.max(0, (now - t0) / 900)); p.textContent = Math.round(v * (1 - Math.pow(1 - k, 3)));
+      if(k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step); });
+}
+const pts = [...document.querySelectorAll('.rrow:not(.h) .pt')];
+pts.forEach(p => p.dataset.v = p.textContent);
+if(!still && 'IntersectionObserver' in window){
+  pts.forEach(p => p.textContent = '0');
+  const rio = new IntersectionObserver(es => { if(!es.some(e => e.isIntersecting)) return; rio.disconnect(); countUp(); }, {threshold:.25});
+  rio.observe(document.querySelector('.rtable'));
+}
+
+/* ---- Зал: полароиды плывут с разной скоростью (параллакс) ---- */
+if(!still){
+  const pols = [...document.querySelectorAll('.pol')], SPEED = [-.07, .05, -.04, .08];
+  let ticking = false;
+  const par = () => { ticking = false; const vh = innerHeight;
+    pols.forEach((p, i) => { const r = p.getBoundingClientRect(); if(r.bottom < -200 || r.top > vh + 200) return;
+      p.style.setProperty('--py', ((r.top + r.height/2 - vh/2) * SPEED[i % 4]).toFixed(1) + 'px'); }); };
+  addEventListener('scroll', () => { if(!ticking){ ticking = true; requestAnimationFrame(par); } }, {passive:true});
+  par();
+}
+
+/* ---- Бронь стола: проверка полей и штамп «принято» ---- */
+const bform = document.getElementById('bform'), berr = document.getElementById('berr');
+bform.addEventListener('submit', e => {
+  e.preventDefault();
+  if(bform.classList.contains('sent')) return;
+  const f = bform.elements, tel = f.tel.value.replace(/\D/g, '');
+  if(!f.name.value.trim()) { berr.textContent = 'Укажите имя.'; f.name.focus(); return; }
+  if(tel.length < 10) { berr.textContent = 'Проверьте телефон: нужно 10–11 цифр.'; f.tel.focus(); return; }
+  if(!f.date.value.trim() || !f.time.value.trim()) { berr.textContent = 'Укажите дату и время.'; return; }
+  if(!f.pd.checked) { berr.textContent = 'Нужно согласие на обработку данных, чтобы мы перезвонили.'; return; }
+  berr.textContent = '';
+  /* на телефоне кнопка внизу длинной формы: после сжатия билет уехал бы за верх экрана */
+  const top0 = bform.getBoundingClientRect().top;
+  if(top0 < 160) scrollTo({ top: scrollY + top0 - 170, behavior: still ? 'auto' : 'smooth' });
+  tearTicket(bform);
+});
+bform.querySelector('.again-b').onclick = () => { bform.classList.remove('sent', 'torn', 'tearing'); bform.reset(); bform.elements.name.focus(); };
+
+/* ---- Мобильное меню ---- */
+const top_ = document.querySelector('header.top'), burger = document.querySelector('.burger');
+burger.onclick = () => { const o = top_.classList.toggle('open'); burger.setAttribute('aria-expanded', o); };
+document.querySelectorAll('#menu a').forEach(a => a.onclick = () => { top_.classList.remove('open'); burger.setAttribute('aria-expanded', false); });
+
+/* ---- Появление блоков ---- */
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }),{threshold:.12}) : null;
+document.querySelectorAll('.rv').forEach(el=> io && !still ? io.observe(el) : el.classList.add('in'));
+/* ---- Превью: «Показать анимации» — проезд по странице с запуском каждой анимации ---- */
+const motionBtn = document.getElementById('motionBtn');
+motionBtn.textContent = document.documentElement.classList.contains('fm') ? 'Анимации: вкл' : 'Анимации: выкл';
+motionBtn.onclick = () => { try{ sessionStorage.setItem('sopranoMotion', document.documentElement.classList.contains('fm') ? 'off' : 'on'); }catch(e){} location.reload(); };
+const replay = els => els.forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const goTo = (sel, block = 'start') => document.querySelector(sel).scrollIntoView({ behavior:'smooth', block });
+let touring = false;
+document.getElementById('tourBtn').onclick = async () => {
+  if(still || touring) return; touring = true;
+  goTo('#top'); await wait(700); replay([...document.querySelectorAll('.lhero h1, .stamp')]); await wait(2000);
+  goTo('#tour'); await wait(700); replay([...document.querySelectorAll('.trow')]); await wait(1800);
+  goTo('#tables'); await wait(700); document.querySelectorAll('.mini').forEach(deal); await wait(3800);
+  goTo('#rating'); await wait(700); countUp(); await wait(2000);
+  goTo('#hall', 'center'); await wait(2000);
+  goTo('#bform', 'center'); await wait(800);
+  bform.classList.remove('sent', 'torn', 'tearing'); bform.reset();
+  const f = bform.elements; f.name.value = 'Анна'; f.tel.value = '8 920 000-00-00'; f.date.value = '15.10'; f.time.value = '20:00'; f.pd.checked = true;
+  await wait(700); bform.requestSubmit ? bform.requestSubmit() : bform.querySelector('[type=submit]').click();
+  touring = false;
+};
+</script>
+</body>
+</html>
