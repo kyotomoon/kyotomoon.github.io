@@ -718,28 +718,6 @@ footer .soc .vk { margin-left:0; text-decoration:none; }
 .js .open-l i { animation:pulse 2.4s ease-out infinite; }
 @keyframes pulse { 0% { box-shadow:0 0 0 0 color-mix(in srgb, var(--poker) 55%, transparent); } 70%, 100% { box-shadow:0 0 0 10px transparent; } }
 
-/* ---------- Ближайший турнир: билет на бумаге ---------- */
-.next { position:relative; background:var(--paper); color:var(--ink); border:0; padding:30px 34px 32px; box-shadow:0 40px 70px -40px #000; }
-.next-h h3, .next-h .mono { color:var(--muted-paper); }
-.next-h h3 { font-size:20px; letter-spacing:.14em; }
-.next .title { color:var(--ink); font-size:60px; margin-top:16px; }
-.next .when { color:var(--italic); }
-.next .cd { gap:0; margin:26px 0 26px; flex-wrap:nowrap; }
-.next .cd .u { padding:0 22px; border-left:1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
-.next .cd .u:first-child { padding-left:0; border-left:0; }
-.next .cd .sep { display:none; }
-.next .flap { gap:0; }
-.next .flap b { width:auto; min-width:.5em; height:auto; background:none; border-radius:0; color:var(--ink); font-size:76px; line-height:.86; }
-.next .flap b::after { display:none; }
-.next .cd .u span, .next .seats-l .lbl { color:var(--muted-paper); }
-.next .cd .u span { font-size:13px; letter-spacing:.16em; margin-top:4px; }
-.next-f { position:relative; border-top:2px dashed color-mix(in srgb, var(--ink) 25%, transparent); padding-top:24px; }
-.next-f::before, .next-f::after { content:""; position:absolute; top:-15px; width:28px; height:28px; border-radius:50%; background:var(--bg); }
-.next-f::before { left:-48px; } .next-f::after { right:-48px; }
-.next .flap.pk b { color:var(--accent); font-size:52px; }
-.next .btn-poker { background:var(--ink); color:var(--paper); }
-.next .btn-poker:hover { background:var(--accent); color:var(--on-accent); }
-
 /* ---------- Табло турниров: тонкие линии, без коробок ---------- */
 .tboard { background:none; border:0; border-top:1px solid color-mix(in srgb, var(--paper) 22%, transparent); }
 .thead { height:46px; font:500 11px/1 "IBM Plex Mono", monospace; letter-spacing:.16em; }
@@ -801,12 +779,6 @@ footer .soc .vk { margin-left:0; text-decoration:none; }
   .cmenu .tt b { font-size:50px; }
 }
 @media (max-width: 900px) {
-  .next { padding:22px 20px 24px; }
-  .next .title { font-size:44px; }
-  .next .cd .u { padding:0 14px; }
-  .next .flap b { font-size:56px; }
-  .next .flap.pk b { font-size:42px; }
-  .next-f::before { left:-34px; } .next-f::after { right:-34px; }
   .open-l { font-size:11px; letter-spacing:.12em; margin-top:16px; }
   .cmenu li > * { grid-template-columns:36px 1fr; gap:4px 12px; padding:24px 0; align-items:start; }
   .cmenu .no { font-size:24px; padding-top:4px; }
@@ -817,8 +789,115 @@ footer .soc .vk { margin-left:0; text-decoration:none; }
   .cmenu a:hover .tt b { transform:none; }
 }
 @media (max-width: 360px) {
-  .next .cd .u { padding:0 10px; }
-  .next .flap b { font-size:48px; }
+}
+
+/* =====================================================================
+   Лобби — фото-полоса с ближайшим вечером; турниры — афиша карточками
+   ===================================================================== */
+.lhero { position:relative; isolation:isolate; padding:120px 0 112px; }
+.lbg { position:absolute; inset:0; z-index:-1; overflow:hidden; }
+.lbg img { width:100%; height:100%; object-fit:cover; object-position:55% 45%; opacity:.6; }
+.lbg::after { content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 88%, transparent) 34%, color-mix(in srgb, var(--bg) 45%, transparent) 70%, color-mix(in srgb, var(--bg) 70%, transparent) 100%),
+             linear-gradient(180deg, var(--bg) 0%, transparent 22%, transparent 78%, var(--bg) 100%); }
+.lhero .wrap { align-items:center; }
+.next { background:none; color:var(--paper); border:0; border-left:1px solid color-mix(in srgb, var(--poker) 55%, transparent); padding:4px 0 4px 52px; box-shadow:none; }
+.next-h h3 { font:500 12px/1 "IBM Plex Mono", monospace; letter-spacing:.18em; color:var(--poker); }
+.next-h .mono { color:var(--muted); }
+.next .title { font:900 76px/.88 "Sofia Sans Extra Condensed"; text-transform:uppercase; color:var(--paper); margin:20px 0 8px; }
+.next .when { font-size:28px; color:color-mix(in srgb, var(--paper) 78%, transparent); }
+.next .cd { gap:0; margin:38px 0 34px; flex-wrap:nowrap; }
+.next .cd .u { padding:0 30px; border-left:1px solid color-mix(in srgb, var(--paper) 16%, transparent); }
+.next .cd .u:first-child { padding-left:0; border-left:0; }
+.next .cd .sep { display:none; }
+.next .flap { gap:0; }
+.next .flap b { width:auto; min-width:.48em; height:auto; background:none; border-radius:0; overflow:visible; font:400 104px/.82 "Instrument Serif", serif; color:var(--paper); }
+.next .flap b::after { display:none; }
+.next .cd .u span { margin-top:10px; font:500 11px/1 "IBM Plex Mono", monospace; letter-spacing:.18em; color:var(--muted); }
+.next-f { border-top:1px solid color-mix(in srgb, var(--paper) 16%, transparent); padding-top:26px; }
+.next .flap.pk b { font-size:64px; color:var(--poker); }
+.next .seats-l .lbl { color:var(--muted); }
+
+/* ---------- Афиша турниров ---------- */
+.ev-rail { display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 60px) / 4); gap:20px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scrollbar-width:none; outline:none; }
+.ev-rail::-webkit-scrollbar { display:none; }
+.ev-rail.is-empty { display:block; }
+.evc { position:relative; isolation:isolate; overflow:hidden; scroll-snap-align:start; min-height:540px; display:flex; flex-direction:column; justify-content:space-between; background:var(--board); }
+.ev-ph { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; transition:transform 1.4s cubic-bezier(.2,.8,.2,1); }
+.evc::before { content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--bg) 70%, transparent) 0%, color-mix(in srgb, var(--bg) 15%, transparent) 26%, color-mix(in srgb, var(--bg) 82%, transparent) 52%, var(--bg) 78%); }
+.evc::after { content:""; position:absolute; inset:0; border:1px solid color-mix(in srgb, var(--paper) 12%, transparent); pointer-events:none; transition:border-color .4s; }
+.evc:hover .ev-ph { transform:scale(1.06); }
+.evc:hover::after { border-color:color-mix(in srgb, var(--poker) 60%, transparent); }
+.ev-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:24px 24px 0; }
+.ev-d b { display:block; font:400 104px/.78 "Instrument Serif", serif; color:var(--paper); }
+.ev-d span { display:block; white-space:nowrap; margin-top:12px; font:500 11px/1 "IBM Plex Mono", monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--paper); }
+.evc .badge { padding:7px 10px; background:color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.evc .b-open { color:var(--paper); }
+.ev-b { padding:0 24px 24px; }
+.ev-w { font:500 12px/1 "IBM Plex Mono", monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--poker); }
+.evc h3 { font:900 42px/.9 "Sofia Sans Extra Condensed"; text-transform:uppercase; margin:12px 0 6px; }
+.evc p.it { font-size:20px; line-height:1.2; color:var(--muted); }
+.ev-m { display:flex; flex-wrap:wrap; gap:4px 0; margin-top:18px; font-size:14px; color:var(--muted); }
+.ev-m span + span::before { content:"·"; margin:0 10px; }
+.ev-s { margin-top:16px; }
+.ev-s .sn { font-size:14px; color:var(--muted); }
+.ev-s .sn b { font:900 26px/1 "Sofia Sans Extra Condensed"; color:var(--paper); margin-right:3px; }
+.ev-s .sbar { margin-top:9px; height:2px; background:color-mix(in srgb, var(--paper) 14%, transparent); }
+.ev-s .sbar i { display:block; height:100%; background:var(--poker); }
+.ev-s.low .sn b { color:var(--accent); } .ev-s.low .sbar i { background:var(--accent); }
+.ev-a { display:flex; align-items:center; gap:16px; margin-top:22px; min-height:48px; }
+.ev-a .btn { flex:1; height:48px; font-size:20px; padding:0 14px; }
+.ev-a .stl { font:700 18px/1 "Sofia Sans Extra Condensed"; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; color:var(--muted); white-space:nowrap; }
+.ev-a .stl:hover { color:var(--paper); }
+.evc.done .ev-ph { filter:grayscale(1); opacity:.5; }
+.evc.done .ev-b, .evc.done .ev-top { opacity:.6; }
+.ev-foot { display:flex; align-items:center; gap:28px; margin-top:28px; }
+.ev-prog { position:relative; flex:1; height:1px; background:var(--line); }
+.ev-prog i { position:absolute; top:-1px; height:3px; left:0; width:100%; background:var(--poker); transition:left .25s, width .25s; }
+.ev-nav { display:flex; gap:8px; }
+.ev-nav button { width:52px; height:52px; border:0; background:none; color:var(--paper); font:400 22px/1 "Rubik"; cursor:pointer; box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--paper) 30%, transparent); transition:background .2s, color .2s; }
+.ev-nav button:hover:not(:disabled) { background:var(--paper); color:var(--bg); }
+.ev-nav button:disabled { opacity:.3; cursor:default; }
+.ev-foot.flat .ev-nav { visibility:hidden; }
+.js .evc { animation:evin .8s cubic-bezier(.2,.8,.2,1) calc(var(--i, 0) * 90ms) both; }
+@keyframes evin { from { opacity:0; transform:translateY(34px); } to { opacity:1; transform:none; } }
+.js .ev-s .sbar i { animation:fillbar 1s cubic-bezier(.2,.8,.2,1) calc(var(--i, 0) * 90ms + .4s) both; }
+@media (prefers-reduced-motion: reduce) {
+  html.js:not(.fm) .evc, html.js:not(.fm) .ev-s .sbar i { animation:none; }
+  html:not(.fm) .ev-ph { transition:none; }
+}
+@media (max-width: 1280px) { .ev-rail { grid-auto-columns:calc((100% - 40px) / 3); } }
+@media (max-width: 1180px) {
+  .ev-rail { grid-auto-columns:calc((100% - 20px) / 2.25); }
+  .next { padding-left:36px; }
+  .next .title { font-size:60px; }
+  .next .flap b { font-size:84px; }
+  .next .cd .u { padding:0 22px; }
+}
+@media (max-width: 900px) {
+  .lhero { padding:56px 0 64px; }
+  .lbg img { opacity:.45; object-position:50% 30%; }
+  .lbg::after { background:linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 55%, transparent) 30%, color-mix(in srgb, var(--bg) 80%, transparent) 60%, var(--bg) 100%); }
+  .next { border-left:0; border-top:1px solid color-mix(in srgb, var(--poker) 55%, transparent); padding:28px 0 0; }
+  .next .title { font-size:46px; margin-top:16px; }
+  .next .when { font-size:22px; }
+  .next .cd { margin:28px 0 26px; }
+  .next .cd .u { padding:0 18px; }
+  .next .flap b { font-size:68px; }
+  .next .flap.pk b { font-size:52px; }
+  .ev-rail { grid-auto-columns:calc(100% - 56px); gap:14px; }
+  .evc { min-height:500px; }
+  .ev-top { padding:20px 20px 0; } .ev-b { padding:0 20px 20px; }
+  .ev-d b { font-size:88px; }
+  .evc h3 { font-size:36px; }
+  .ev-foot { gap:16px; margin-top:20px; }
+  .ev-nav button { width:46px; height:46px; }
+}
+@media (max-width: 360px) {
+  .next .cd .u { padding:0 12px; }
+  .next .flap b { font-size:56px; }
+  .ev-rail { grid-auto-columns:calc(100% - 40px); }
 }
 #toLanding { display:none; }
 </style>
@@ -879,7 +958,9 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
 </div></section>
 
 <!-- 3. Лобби: заголовок + ближайший турнир -->
-<section class="lhero" id="lobby"><div class="wrap">
+<section class="lhero" id="lobby">
+<div class="lbg" aria-hidden="true"><img src="img/club-1.jpg" alt="" loading="lazy"></div>
+<div class="wrap">
   <div class="rv">
     <div class="crumbs it"><a href="#top">Сопрано</a> / <b>покер-рум</b></div>
     <div class="ttl"><h2 class="lt">Лобби</h2></div>
@@ -887,7 +968,7 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
     <p class="lead">Расписание турниров, свободные места за столами и рейтинг сезона. Классический турнир — <em>500 ₽</em>, играем на фишки и очки, без денежных ставок. Только 18+.</p>
   </div>
   <div class="next rv">
-    <div class="next-h"><h3>Ближайший турнир</h3><span class="mono">обновлено 21:47</span></div>
+    <div class="next-h"><h3>Ближайший вечер</h3><span class="mono">обновлено 21:47</span></div>
     <div class="title">Покерный вечер</div>
     <div class="when it">среда, 15 октября · 19:00 · фриз-аут</div>
     <div class="cd" aria-label="До начала">
@@ -915,11 +996,8 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
       </div>
     </div>
   </div>
-  <div class="tboard rv">
-    <div class="thead"><div>Дата</div><div>Турнир</div><div>Формат</div><div>Стек</div><div>Свободно</div><div>Статус</div><div></div></div>
-    <div id="tlist"></div>
-  </div>
-  <p class="mono" style="color:var(--muted);margin-top:14px">Форматы, стеки и число мест — демо <span class="todo">[уточнить у заказчика]</span></p>
+  <div class="ev-rail rv" id="tlist" tabindex="0" aria-label="Афиша турниров"></div>
+  <div class="ev-foot"><div class="ev-prog" aria-hidden="true"><i></i></div><div class="ev-nav"><button type="button" class="evp" aria-label="Назад">←</button><button type="button" class="evn" aria-label="Вперёд">→</button></div></div>
 </div></section>
 
 <!-- 3. Столы сейчас -->
@@ -1114,10 +1192,10 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
     <tr><td>Фото</td><td>только реальные фото клуба. Главное — полный турнирный стол, в рамке-отпечатке «Бумага». Бильярд — фото директора за столом 1979 года, с подложкой цвета акцента со сдвигом. Зал — полароиды</td><td>рамка 14 / 8 · подложка сдвиг 22 / 14 · кадр 5:4 / 4:3,4</td></tr>
     <tr><td>Карта клуба («Чем заняться»)</td><td>список как меню бара: римский номер курсивом латунью, название Sofia Black КАПС, описание курсивом, справа цена или пометка моно латунью; разделители — волосяные линии. При наведении название сдвигается и становится латунным, снизу прорисовывается линия, появляется стрелка</td><td>название 60 / 36 · описание 21 / 18 · строка 34 / 24 сверху и снизу</td></tr>
     <tr><td>Вопросы</td><td>аккордеон: вопрос Sofia Bold КАПС, «+» в квадрате-обводке, при открытии поворачивается в «×»; заголовок блока слева липнет при прокрутке</td><td>вопрос 28 / 23 · ответ 18 / 17</td></tr>
-    <tr><td>Карточка «Ближайший турнир»</td><td>билет на «Бумаге»: перфорация пунктиром и два выреза перед нижней строкой; отсчёт крупными цифрами цвета «Текст на бумаге», единицы разделены тонкими линиями; свободные места — акцентом; кнопка тёмная, при наведении — акцент. Над заголовком «Лобби» — строка «открыто ежедневно» моно латунью с пульсирующей точкой</td><td>название 60 / 44 · цифры 76 / 56 · места 52 / 42</td></tr>
+    <tr><td>Лобби и «Ближайший вечер»</td><td>полоса на фото зала (затемнение слева направо и сверху вниз). Слева «Лобби» и строка «открыто ежедневно» моно латунью; справа ближайший вечер без карточки, отделён тонкой латунной линией: название Sofia Black, дата курсивом, отсчёт крупными цифрами Instrument Serif с тонкими разделителями, свободные места латунью</td><td>название 76 / 46 · цифры 104 / 68 · отступ от линии 52</td></tr>
     <tr><td>Фильтр периода</td><td>сегмент без скруглений; активный — заливка «Бумага», текст «Фон»</td><td>высота 44 · Sofia Bold 20, КАПС</td></tr>
     <tr><td>Фильтр формата</td><td>чипы-обводки 1,5 px «Линии»; активный — обводка и текст «Покер»</td><td>высота 36 · Sofia Bold 17</td></tr>
-    <tr><td>Табло турниров</td><td>без коробки: волосяные линии между строками, подсветка строки при наведении. 7 колонок: дата · турнир · формат · стек · свободно (число и тонкая полоса заполненности) · статус · кнопки; «Записаться» — обводка латунью, «Стол →» — текстовая ссылка; на планшете и телефоне строка становится карточкой</td><td>дата 40 / 34 · название 28 / 26 · строка 20 сверху и снизу</td></tr>
+    <tr><td>Афиша турниров</td><td>лента карточек-афиш с прокруткой вбок и прилипанием: фото зала под затемнением, сверху число месяца Instrument Serif и статус на тёмной подложке, снизу время и формат моно латунью, название, описание курсивом, стек и столы, свободные места числом и полосой, кнопка «Записаться» латунью и ссылка «Стол →». Под лентой — полоса прокрутки и стрелки</td><td>карточка ≥ 540 / 500 · 4 / 3 / 2,25 / 1 на экран · число 104 / 88 · название 42 / 36</td></tr>
     <tr><td>Статусы</td><td>точка и подпись моно, без плашек: «запись идёт» — светлая; «последние места» — акцент; «идёт игра» — латунь, точка мигает; «по рейтингу» — латунь, точка-кольцо; «завершён» — серый, строка 50%</td><td>IBM Plex Mono 12, разрядка 12% · точка 7</td></tr>
     <tr><td>Карточка стола</td><td>стол сверху: борт цветом «Плитки цифр», сукно — «Покер» 16% на «Фоне табло», пунктирная линия ставок, общие карты и банк в центре. Дилер в центре нижней стороны, 9 мест за бортом по часовой стрелке от его левой руки: занятое — круг «Бумага» с номером, перед ним две карты рубашкой и стопка фишек (ребро на 40% темнее, вставки по краю, кольцо на верхней); блайнды — 1 и 2 фишки за линией ставок; свободное — пунктир. Кнопка D — на сукне перед игроком</td><td>стол 320×160, место Ø 28, карта 14×20 · цифры 32</td></tr>
     <tr><td>Рейтинг</td><td>на «бумаге», пунктир 8 / 6 как в афише, первая тройка — цифры цветом «Покер»</td><td>место 44 / 34 · имя 28 / 22 · очки 34 / 28</td></tr>
@@ -1133,7 +1211,7 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
     <tr><td>Чем заняться</td><td>строки карты клуба проявляются по очереди снизу; при наведении — сдвиг названия, линия и стрелка</td><td>0,7 с, шаг 100 мс · наведение 0,4–0,6 с</td></tr>
     <tr><td>Вопросы</td><td>«+» поворачивается в «×», ответ выезжает сверху</td><td>0,3 с · 0,4 с</td></tr>
     <tr><td>Ближайший турнир</td><td>цифры отсчёта и свободных мест перещёлкиваются, как на вокзальном табло; отсчёт обновляется раз в 15 с</td><td>85 мс на щелчок</td></tr>
-    <tr><td>Табло турниров</td><td>строки выезжают слева по очереди — при загрузке и при каждом переключении фильтра</td><td>0,45 с, шаг 70 мс</td></tr>
+    <tr><td>Афиша турниров</td><td>карточки поднимаются по очереди при загрузке и смене фильтра, полосы мест заполняются; при наведении фото медленно приближается, рамка становится латунной</td><td>0,8 с, шаг 90 мс · полоса 1 с · фото 1,4 с</td></tr>
     <tr><td>Столы сейчас — сцена «раздача»</td><td>когда стол появляется на экране: стопки фишек падают, блайнды ставятся за линию, кнопка D появляется, дилер раздаёт по две карты по часовой стрелке, затем открываются общие карты и банк. Клик по столу или «↻ раздать» — заново</td><td>≈ 3 с на всю раздачу</td></tr>
     <tr><td>Рейтинг сезона</td><td>очки набегают от нуля, сверху вниз</td><td>0,9 с, шаг 70 мс</td></tr>
     <tr><td>Зал</td><td>полароиды плывут с разной скоростью при прокрутке (параллакс), при наведении выпрямляются</td><td>смещение до ±40 px</td></tr>
@@ -1186,6 +1264,8 @@ function flapTo(el, value, delay=0){
 
 /* ---- Данные турниров (демо) ---- */
 const FMT = {freeze:'Фриз-аут', rebuy:'Ребай', sng:'Сит-энд-гоу', learn:'Обучение'};
+const EVIMG = {freeze:'club-3', rebuy:'club-5', sng:'club-2', learn:'club-2'};
+const MON = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
 const T = [
   {id:'t0', d:'2026-10-08', dow:'среда', time:'19:00', name:'Покерный вечер', note:'турнир на рейтинг', fmt:'freeze', stack:'10 000', taken:18, max:18, st:'done'},
   {id:'t1', d:'2026-10-13', dow:'вторник', time:'19:00', name:'Обучающий вечер', note:'дилер объясняет каждую раздачу', fmt:'learn', stack:'5 000', taken:13, max:18, st:'live'},
@@ -1208,18 +1288,23 @@ function status(t){
 function render(){
   const list=T.filter(t=> (per==='today'? t.d===TODAY : per==='week'? (t.d>=TODAY && t.d<=WEEK_END) : true) && (fmt==='all'||t.fmt===fmt));
   const el=document.getElementById('tlist');
-  if(!list.length){ el.innerHTML='<div class="empty it">В этот период таких турниров нет. Попробуйте другой формат или месяц.</div>'; return; }
+  if(!list.length){ el.classList.add('is-empty'); if(window.railUI) setTimeout(railUI); el.innerHTML='<div class="empty it">В этот период таких турниров нет. Попробуйте другой формат или месяц.</div>'; return; }
+  el.classList.remove('is-empty');
   el.innerHTML=list.map((t,idx)=>{
-    const free=t.max-t.taken, can=t.st==='open' && free>0;
-    return `<div class="trow${t.st==='done'?' done':''}" style="--i:${idx}">
-      <div class="t-date">${ddmm(t.d)}<span>${t.dow}</span><small>${t.time}</small></div>
-      <div class="t-name">${t.name}<span>${t.note}</span></div>
-      <div class="t-fmt"><b>${FMT[t.fmt]}</b>${t.max===9?'1 стол':'2 стола'}</div>
-      <div class="t-stack">${t.stack}<span>фишек</span></div>
-      <div class="t-seats${free<=3&&can?' low':''}"><div class="sn"><b>${free}</b> из ${t.max}</div><div class="sbar"><i style="width:${Math.round(t.taken/t.max*100)}%"></i></div></div>
-      <div class="t-status">${status(t)}</div>
-      <div class="t-act">${can?`<button class="btn btn-poker" data-join="${t.id}">Записаться</button>`:''}${t.st!=='done'?`<a class="btn btn-ghost stl" href="#" title="Страница стола — в прототипе">Стол →</a>`:''}</div>
-    </div>`;}).join('');
+    const free=t.max-t.taken, can=t.st==='open' && free>0, low=free<=3&&can;
+    return `<article class="evc${t.st==='done'?' done':''}" style="--i:${idx}">
+      <img class="ev-ph" src="img/${EVIMG[t.fmt]}.jpg" alt="" loading="lazy">
+      <div class="ev-top"><div class="ev-d"><b>${+t.d.slice(8)}</b><span>${MON[+t.d.slice(5,7)-1]} · ${t.dow}</span></div>${status(t)}</div>
+      <div class="ev-b">
+        <div class="ev-w">${t.time} · ${FMT[t.fmt]}</div>
+        <h3>${t.name}</h3>
+        <p class="it">${t.note}</p>
+        <div class="ev-m"><span>${t.stack} фишек</span><span>${t.max===9?'1 стол':'2 стола'}</span></div>
+        <div class="ev-s${low?' low':''}"><div class="sn"><b>${free}</b> из ${t.max} свободно</div><div class="sbar"><i style="width:${Math.round(t.taken/t.max*100)}%"></i></div></div>
+        <div class="ev-a">${can?`<button class="btn btn-poker" data-join="${t.id}">Записаться</button>`:''}${t.st!=='done'?`<a class="stl" href="#" title="Страница стола — в прототипе">Стол →</a>`:''}</div>
+      </div>
+    </article>`;}).join('');
+  el.scrollLeft=0; if(window.railUI) railUI();
 }
 document.querySelectorAll('[data-per]').forEach(b=>b.onclick=()=>{ per=b.dataset.per; document.querySelectorAll('[data-per]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
 document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{ fmt=b.dataset.fmt; document.querySelectorAll('[data-fmt]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
@@ -1414,6 +1499,20 @@ if(!still && 'IntersectionObserver' in window){
   yio.observe(yr);
 }
 
+/* ---- Афиша: стрелки и полоса прокрутки ---- */
+const rail = document.getElementById('tlist'), progI = document.querySelector('.ev-prog i'), evp = document.querySelector('.evp'), evn = document.querySelector('.evn');
+window.railUI = () => {
+  const sw = rail.scrollWidth, cw = rail.clientWidth, max = sw - cw;
+  progI.style.width = (max > 2 ? cw / sw * 100 : 100) + '%';
+  progI.style.left = (max > 2 ? rail.scrollLeft / sw * 100 : 0) + '%';
+  evp.disabled = rail.scrollLeft < 4; evn.disabled = rail.scrollLeft > max - 4;
+  document.querySelector('.ev-foot').classList.toggle('flat', max <= 2);
+};
+const step = dir => { const c = rail.querySelector('.evc'); if(c) rail.scrollBy({ left: dir * (c.offsetWidth + 20), behavior: still ? 'auto' : 'smooth' }); };
+evp.onclick = () => step(-1); evn.onclick = () => step(1);
+rail.addEventListener('scroll', () => requestAnimationFrame(railUI), {passive:true});
+addEventListener('resize', railUI); railUI();
+
 /* ---- Мобильное меню ---- */
 const top_ = document.querySelector('header.top'), burger = document.querySelector('.burger');
 burger.onclick = () => { const o = top_.classList.toggle('open'); burger.setAttribute('aria-expanded', o); };
@@ -1435,7 +1534,7 @@ document.getElementById('tourBtn').onclick = async () => {
   goTo('#top'); await wait(700); replay([...document.querySelectorAll('.hero h1, .hero-ph img')]); await wait(2000);
   goTo('#billiard'); await wait(800); rewind(); await wait(2200);
   goTo('#lobby'); await wait(700); replay([...document.querySelectorAll('.lhero .lt, .lhero .stamp')]); await wait(1600);
-  goTo('#tour'); await wait(700); replay([...document.querySelectorAll('.trow')]); await wait(1800);
+  goTo('#tour'); await wait(700); replay([...document.querySelectorAll('.evc')]); await wait(1800);
   goTo('#tables'); await wait(700); document.querySelectorAll('.mini').forEach(deal); await wait(3800);
   goTo('#rating'); await wait(700); countUp(); await wait(2000);
   const cg = document.querySelector('.cmenu'); goTo('#club'); await wait(700); cg.classList.remove('in'); void cg.offsetWidth; cg.classList.add('in'); await wait(2000);
