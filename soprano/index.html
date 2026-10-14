@@ -12,7 +12,7 @@
 /* ---------- Палитры: те же роли и HEX, что в превью лендинга ---------- */
 :root, [data-p="1"] {
   --bg:#0C0B0A; --paper:#F2E8D5; --ink:#14110D; --accent:#E8352B; --on-accent:#F2E8D5;
-  --italic:#E8352B; --poker:#6F89FF; --on-poker:#0C0B0A; --muted:#8C857A; --line:#2B2823;
+  --italic:#E8352B; --poker:#C9A464; --on-poker:#0C0B0A; --muted:#8C857A; --line:#2B2823;
   --board:#151310; --tile:#22201B; --muted-paper:#5E574C;
 }
 [data-p="2"] {
@@ -605,27 +605,7 @@ dialog { overflow:auto; padding:16px 44px 44px 16px; max-width:min(920px, calc(1
 .club-h, .hall-h { display:flex; justify-content:space-between; align-items:flex-end; gap:16px 32px; flex-wrap:wrap; }
 .club-h { margin-bottom:48px; }
 .club-h .it, .hall-h .it { font-size:30px; color:var(--muted); max-width:15em; }
-.cgrid { display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; }
-.ctile { position:relative; overflow:hidden; display:flex; flex-direction:column; gap:12px; min-height:380px; padding:26px 24px 28px; background:var(--board); border:1px solid var(--line); border-top:3px solid var(--accent); color:inherit; text-decoration:none; }
-.ctile.c-pk { border-top-color:var(--poker); }
-.ctile .gl { height:124px; margin-bottom:10px; display:flex; align-items:flex-end; font:900 132px/.8 "Sofia Sans Extra Condensed"; text-transform:uppercase; color:var(--accent); }
-.ctile.c-pk .gl { color:var(--poker); }
-.ctile.c-bl .gl i { width:108px; height:108px; border-radius:50%; display:grid; place-items:center; font:900 50px/1 "Sofia Sans Extra Condensed"; font-style:normal; color:var(--ink);
   background:radial-gradient(circle at 50% 50%, var(--paper) 0 31%, #0000 32%), radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--accent) 55%, #fff) 0, var(--accent) 38%, color-mix(in srgb, var(--accent) 60%, #000) 100%); }
-.ctile h3 { font:700 32px/1 "Sofia Sans Extra Condensed"; letter-spacing:.03em; text-transform:uppercase; }
-.ctile p { font-size:17px; color:var(--muted); }
-.ctile .go { margin-top:auto; padding-top:8px; font:700 18px/1 "Sofia Sans Extra Condensed"; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
-.ctile.c-pk .go { color:var(--poker); }
-a.ctile { transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s; }
-a.ctile:hover { transform:translateY(-6px); }
-/* плитки выходят по очереди, шар «восьмёрка» закатывается */
-.js .cgrid.rv { transform:none; }
-.js .cgrid .ctile { opacity:0; transform:translateY(26px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
-.js .cgrid.in .ctile { opacity:1; transform:none; }
-.cgrid .ctile:nth-child(2) { transition-delay:.09s; } .cgrid .ctile:nth-child(3) { transition-delay:.18s; } .cgrid .ctile:nth-child(4) { transition-delay:.27s; }
-.js .cgrid.in a.ctile:hover { transform:translateY(-6px); transition-delay:0s; }
-.js .cgrid.in .c-bl .gl i { animation:roll 1.2s cubic-bezier(.15,.75,.25,1) .35s both; }
-@keyframes roll { from { transform:translateX(-170px) rotate(-400deg); } to { transform:none; } }
 
 /* ---------- 8. Зал: настоящие фото в полароидах ---------- */
 .hall-h { margin-bottom:8px; }
@@ -658,8 +638,7 @@ footer .soc { margin-left:auto; display:flex; gap:28px; flex-wrap:wrap; }
 footer .soc .vk { margin-left:0; text-decoration:none; }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js:not(.fm) .hero h1, html.js:not(.fm) .hero-ph img, html.js:not(.fm) .cgrid.in .c-bl .gl i, html.js:not(.fm) .qa details[open] p { animation:none; }
-  html.js:not(.fm) .cgrid .ctile { opacity:1; transform:none; transition:none; }
+  html.js:not(.fm) .hero h1, html.js:not(.fm) .hero-ph img, html.js:not(.fm) .qa details[open] p { animation:none; }
 }
 
 /* ---------- Меню прячется в бургер раньше: пунктов стало семь ---------- */
@@ -682,8 +661,6 @@ footer .soc .vk { margin-left:0; text-decoration:none; }
   .hero .wrap { gap:48px; }
   .hero-f { grid-template-columns:repeat(3, auto); gap:12px 28px; }
   .bill .wrap { gap:56px; }
-  .cgrid { grid-template-columns:1fr 1fr; }
-  .ctile { min-height:0; }
   .faq .wrap { gap:48px; }
 }
 
@@ -724,14 +701,124 @@ footer .soc .vk { margin-left:0; text-decoration:none; }
   footer .soc { margin-left:0; }
 }
 @media (max-width: 600px) {
-  .cgrid { grid-template-columns:1fr; gap:14px; }
-  .ctile .gl { height:100px; font-size:104px; }
-  .ctile.c-bl .gl i { width:88px; height:88px; font-size:42px; }
 }
 @media (max-width: 380px) {
   .hero-f { grid-template-columns:1fr 1fr; }
   .hero-f li:last-child { grid-column:1 / -1; }
   .faq-l .btn { width:100%; }
+}
+
+/* =====================================================================
+   Дороже: латунь вместо голубого, билет вместо плашки, тонкое табло, карта клуба
+   ===================================================================== */
+/* ---------- Лобби: строка «открыто», без наклейки ---------- */
+.lhero .ttl { font-size:min(216px, calc(100cqw / 2.75)); }
+.open-l { display:flex; align-items:center; gap:12px; margin-top:22px; font:500 13px/1 "IBM Plex Mono", monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--poker); }
+.open-l i { width:8px; height:8px; border-radius:50%; background:var(--poker); box-shadow:0 0 0 0 color-mix(in srgb, var(--poker) 60%, transparent); }
+.js .open-l i { animation:pulse 2.4s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow:0 0 0 0 color-mix(in srgb, var(--poker) 55%, transparent); } 70%, 100% { box-shadow:0 0 0 10px transparent; } }
+
+/* ---------- Ближайший турнир: билет на бумаге ---------- */
+.next { position:relative; background:var(--paper); color:var(--ink); border:0; padding:30px 34px 32px; box-shadow:0 40px 70px -40px #000; }
+.next-h h3, .next-h .mono { color:var(--muted-paper); }
+.next-h h3 { font-size:20px; letter-spacing:.14em; }
+.next .title { color:var(--ink); font-size:60px; margin-top:16px; }
+.next .when { color:var(--italic); }
+.next .cd { gap:0; margin:26px 0 26px; flex-wrap:nowrap; }
+.next .cd .u { padding:0 22px; border-left:1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.next .cd .u:first-child { padding-left:0; border-left:0; }
+.next .cd .sep { display:none; }
+.next .flap { gap:0; }
+.next .flap b { width:auto; min-width:.5em; height:auto; background:none; border-radius:0; color:var(--ink); font-size:76px; line-height:.86; }
+.next .flap b::after { display:none; }
+.next .cd .u span, .next .seats-l .lbl { color:var(--muted-paper); }
+.next .cd .u span { font-size:13px; letter-spacing:.16em; margin-top:4px; }
+.next-f { position:relative; border-top:2px dashed color-mix(in srgb, var(--ink) 25%, transparent); padding-top:24px; }
+.next-f::before, .next-f::after { content:""; position:absolute; top:-15px; width:28px; height:28px; border-radius:50%; background:var(--bg); }
+.next-f::before { left:-48px; } .next-f::after { right:-48px; }
+.next .flap.pk b { color:var(--accent); font-size:52px; }
+.next .btn-poker { background:var(--ink); color:var(--paper); }
+.next .btn-poker:hover { background:var(--accent); color:var(--on-accent); }
+
+/* ---------- Табло турниров: тонкие линии, без коробок ---------- */
+.tboard { background:none; border:0; border-top:1px solid color-mix(in srgb, var(--paper) 22%, transparent); }
+.thead { height:46px; font:500 11px/1 "IBM Plex Mono", monospace; letter-spacing:.16em; }
+.trow { transition:background .25s; }
+.trow:hover { background:color-mix(in srgb, var(--paper) 3%, transparent); }
+.trow:last-child { border-bottom:1px solid var(--line); }
+.t-date small { color:var(--poker); }
+.t-seats { display:block; }
+.t-seats .sn { font:400 16px/1 "Rubik"; color:var(--muted); white-space:nowrap; }
+.t-seats .sn b { font:900 30px/1 "Sofia Sans Extra Condensed"; color:var(--paper); margin-right:2px; }
+.t-seats .sbar { margin-top:10px; height:2px; width:100%; max-width:120px; background:var(--line); }
+.t-seats .sbar i { display:block; height:100%; background:var(--poker); }
+.t-seats.low .sn b { color:var(--accent); } .t-seats.low .sbar i { background:var(--accent); }
+.js .t-seats .sbar i { animation:fillbar .9s cubic-bezier(.2,.8,.2,1) calc(var(--i, 0) * 70ms + .2s) both; }
+@keyframes fillbar { from { width:0; } }
+/* статусы: точка и подпись вместо цветных плашек */
+.badge { height:auto; padding:0; gap:9px; background:none; box-shadow:none; font:500 12px/1.2 "IBM Plex Mono", monospace; letter-spacing:.12em; }
+.badge::before { content:""; flex:none; width:7px; height:7px; border-radius:50%; background:currentColor; margin:0; }
+.b-open { color:var(--paper); box-shadow:none; } .b-open::before { background:color-mix(in srgb, var(--paper) 45%, transparent); }
+.b-last { color:var(--accent); background:none; }
+.b-live { color:var(--poker); background:none; }
+.b-rank { color:var(--poker); box-shadow:none; } .b-rank::before { background:none; box-shadow:inset 0 0 0 1.5px currentColor; }
+.b-done { color:var(--muted); box-shadow:none; }
+/* кнопки в строке: обводка латунью, «Стол» — текстовая ссылка */
+.t-act .btn-poker { background:transparent; color:var(--poker); box-shadow:inset 0 0 0 1.5px var(--poker); transition:background .2s, color .2s; }
+.t-act .btn-poker:hover { background:var(--poker); color:var(--on-poker); }
+.t-act .stl { box-shadow:none; color:var(--muted); padding:0 4px 0 12px; }
+.t-act .stl:hover { color:var(--paper); }
+.chips button[aria-pressed="true"] { background:color-mix(in srgb, var(--poker) 12%, transparent); }
+
+/* ---------- Чем заняться: карта клуба, как меню бара ---------- */
+.cmenu { list-style:none; border-top:1px solid color-mix(in srgb, var(--paper) 22%, transparent); }
+.cmenu li { border-bottom:1px solid var(--line); }
+.cmenu li > * { position:relative; display:grid; grid-template-columns:72px 1fr 240px 40px; gap:24px; align-items:center; padding:34px 0; color:inherit; text-decoration:none; }
+.cmenu .no { font:400 30px/1 "Instrument Serif", serif; font-style:italic; color:var(--poker); }
+.cmenu .tt b { display:block; font:900 60px/.9 "Sofia Sans Extra Condensed"; text-transform:uppercase; letter-spacing:-.005em; transition:transform .4s cubic-bezier(.2,.8,.2,1), color .3s; }
+.cmenu .tt em { display:block; margin-top:10px; max-width:36em; font:400 21px/1.3 "Instrument Serif", serif; font-style:italic; color:var(--muted); }
+.cmenu .pr { justify-self:end; text-align:right; font:500 13px/1.3 "IBM Plex Mono", monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--poker); }
+.cmenu .ar { justify-self:end; font:400 28px/1 "Rubik"; color:var(--poker); opacity:0; transform:translateX(-12px); transition:opacity .3s, transform .4s cubic-bezier(.2,.8,.2,1); }
+.cmenu a::after { content:""; position:absolute; left:0; bottom:-1px; height:1px; width:100%; background:var(--poker); transform:scaleX(0); transform-origin:0 50%; transition:transform .6s cubic-bezier(.2,.8,.2,1); }
+.cmenu a:hover .tt b { transform:translateX(12px); color:var(--poker); }
+.cmenu a:hover .ar { opacity:1; transform:none; }
+.cmenu a:hover::after { transform:none; }
+/* строки проявляются по очереди */
+.js .cmenu.rv { transform:none; }
+.js .cmenu li { opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+.js .cmenu.in li { opacity:1; transform:none; }
+.cmenu li:nth-child(2) { transition-delay:.1s; } .cmenu li:nth-child(3) { transition-delay:.2s; } .cmenu li:nth-child(4) { transition-delay:.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.js:not(.fm) .open-l i, html.js:not(.fm) .t-seats .sbar i { animation:none; }
+  html.js:not(.fm) .cmenu li { opacity:1; transform:none; transition:none; }
+}
+@media (max-width: 1180px) {
+  .t-seats { grid-column:1/-1; display:flex; align-items:center; gap:14px; }
+  .t-seats .sbar { margin-top:0; flex:1; max-width:none; }
+  .t-act .stl { flex:0 0 auto; }
+  .cmenu li > * { grid-template-columns:60px 1fr 200px 32px; }
+  .cmenu .tt b { font-size:50px; }
+}
+@media (max-width: 900px) {
+  .next { padding:22px 20px 24px; }
+  .next .title { font-size:44px; }
+  .next .cd .u { padding:0 14px; }
+  .next .flap b { font-size:56px; }
+  .next .flap.pk b { font-size:42px; }
+  .next-f::before { left:-34px; } .next-f::after { right:-34px; }
+  .open-l { font-size:11px; letter-spacing:.12em; margin-top:16px; }
+  .cmenu li > * { grid-template-columns:36px 1fr; gap:4px 12px; padding:24px 0; align-items:start; }
+  .cmenu .no { font-size:24px; padding-top:4px; }
+  .cmenu .tt b { font-size:36px; }
+  .cmenu .tt em { font-size:18px; margin-top:8px; }
+  .cmenu .pr { grid-column:2; justify-self:start; text-align:left; margin-top:8px; font-size:11px; }
+  .cmenu .ar { display:none; }
+  .cmenu a:hover .tt b { transform:none; }
+}
+@media (max-width: 360px) {
+  .next .cd .u { padding:0 10px; }
+  .next .flap b { font-size:48px; }
 }
 #toLanding { display:none; }
 </style>
@@ -795,8 +882,8 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
 <section class="lhero" id="lobby"><div class="wrap">
   <div class="rv">
     <div class="crumbs it"><a href="#top">Сопрано</a> / <b>покер-рум</b></div>
-    <div class="ttl"><h2 class="lt">Лобби</h2>
-    <div class="stamp" aria-label="Открыто до 02:00"><div><div class="s1">открыто до</div><div class="s2">02:00</div><div class="s3 it">ежедневно</div></div></div></div>
+    <div class="ttl"><h2 class="lt">Лобби</h2></div>
+    <div class="open-l"><i></i>открыто ежедневно · 17:00–02:00</div>
     <p class="lead">Расписание турниров, свободные места за столами и рейтинг сезона. Классический турнир — <em>500 ₽</em>, играем на фишки и очки, без денежных ставок. Только 18+.</p>
   </div>
   <div class="next rv">
@@ -809,7 +896,7 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
       <div class="u"><div class="flap" id="cdM"><b>0</b><b>0</b></div><span>минут</span></div>
     </div>
     <div class="next-f">
-      <div class="seats-l"><div class="flap pk" data-v="06" id="nextSeats"><b>0</b><b>6</b></div><div class="lbl">мест<br>из 18</div></div>
+      <div class="seats-l"><div class="flap pk" data-v="06" id="nextSeats"><b>0</b><b>6</b></div><div class="lbl">свободных мест<br>из 18</div></div>
       <button class="btn btn-poker" data-join="t2">Записаться</button>
     </div>
   </div>
@@ -829,7 +916,7 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
     </div>
   </div>
   <div class="tboard rv">
-    <div class="thead"><div>Дата</div><div>Турнир</div><div>Формат</div><div>Стек</div><div>Мест</div><div>Статус</div><div></div></div>
+    <div class="thead"><div>Дата</div><div>Турнир</div><div>Формат</div><div>Стек</div><div>Свободно</div><div>Статус</div><div></div></div>
     <div id="tlist"></div>
   </div>
   <p class="mono" style="color:var(--muted);margin-top:14px">Форматы, стеки и число мест — демо <span class="todo">[уточнить у заказчика]</span></p>
@@ -905,12 +992,12 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
 <!-- 7. Чем заняться: покер, бильярд, бар, PS5 -->
 <section class="club" id="club"><div class="wrap">
   <div class="club-h rv"><h2 class="big">Один адрес.<br>Много поводов</h2><div class="it">можно прийти за игрой, а можно просто выдохнуть</div></div>
-  <div class="cgrid rv">
-    <a class="ctile c-pk" href="#lobby"><div class="gl">♠</div><h3>Спортивный покер</h3><p>Рейтинговые турниры без игры на деньги. Классический турнир — 500 ₽, новичкам бесплатное обучение.</p><span class="go">расписание →</span></a>
-    <a class="ctile c-bl" href="#billiard"><div class="gl"><i>8</i></div><h3>Бильярд 1979</h3><p>Винтажный итальянский стол с характером. Партия до турнира или вместо него.</p><span class="go">история стола →</span></a>
-    <div class="ctile c-bar"><div class="gl">Бар</div><h3>Бар, кофе и чай</h3><p>Любимый напиток к хорошему разговору: барное настроение или спокойный вечер за чашкой. Можно заказать еду.</p></div>
-    <div class="ctile c-ps"><div class="gl">PS5</div><h3>PlayStation 5</h3><p>Сменить стол на геймпад и отдохнуть с друзьями. Ещё одну партию?</p></div>
-  </div>
+  <ol class="cmenu rv">
+    <li><a href="#lobby"><span class="no">i</span><span class="tt"><b>Спортивный покер</b><em>Рейтинговые турниры без игры на деньги. Новичкам — бесплатное обучение и помощь за столом.</em></span><span class="pr">500 ₽ · турнир</span><span class="ar" aria-hidden="true">→</span></a></li>
+    <li><a href="#billiard"><span class="no">ii</span><span class="tt"><b>Бильярд 1979</b><em>Винтажный итальянский стол с характером. Партия до турнира или вместо него.</em></span><span class="pr">Италия · 1979</span><span class="ar" aria-hidden="true">→</span></a></li>
+    <li><div><span class="no">iii</span><span class="tt"><b>Бар, кофе и чай</b><em>Любимый напиток к хорошему разговору: барное настроение или спокойный вечер за чашкой. Можно заказать еду.</em></span><span class="pr">17:00–02:00</span></div></li>
+    <li><div><span class="no">iv</span><span class="tt"><b>PlayStation 5</b><em>Сменить стол на геймпад и отдохнуть с друзьями. Ещё одну партию?</em></span><span class="pr">для компании</span></div></li>
+  </ol>
 </div></section>
 
 <!-- 8. Зал -->
@@ -1025,13 +1112,13 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
     <tr><th>Компонент</th><th>Устройство</th><th>Размеры, px (1440 / 390)</th></tr>
     <tr><td>Логотип</td><td>файл заказчика, переведён в маску: цвет берётся из палитры («Бумага»), жёлтый оригинал не используется. В шапке — знак и надпись в строку, в подвале — полный логотип</td><td>знак 26×46 / 22×39 · надпись 152×26 / 124×21 · подвал 132 / 104</td></tr>
     <tr><td>Фото</td><td>только реальные фото клуба. Главное — полный турнирный стол, в рамке-отпечатке «Бумага». Бильярд — фото директора за столом 1979 года, с подложкой цвета акцента со сдвигом. Зал — полароиды</td><td>рамка 14 / 8 · подложка сдвиг 22 / 14 · кадр 5:4 / 4:3,4</td></tr>
-    <tr><td>Плитки «Чем заняться»</td><td>фон «Табло», верхняя линия 3 px акцентом (покер — цветом «Покер»), крупный знак: ♠, шар «8», «Бар», «PS5»</td><td>знак 132 / 104 · заголовок 32 · 4 / 2 / 1 в ряд</td></tr>
+    <tr><td>Карта клуба («Чем заняться»)</td><td>список как меню бара: римский номер курсивом латунью, название Sofia Black КАПС, описание курсивом, справа цена или пометка моно латунью; разделители — волосяные линии. При наведении название сдвигается и становится латунным, снизу прорисовывается линия, появляется стрелка</td><td>название 60 / 36 · описание 21 / 18 · строка 34 / 24 сверху и снизу</td></tr>
     <tr><td>Вопросы</td><td>аккордеон: вопрос Sofia Bold КАПС, «+» в квадрате-обводке, при открытии поворачивается в «×»; заголовок блока слева липнет при прокрутке</td><td>вопрос 28 / 23 · ответ 18 / 17</td></tr>
-    <tr><td>Карточка «Ближайший турнир»</td><td>фон «Табло», верхняя линия 3 px цветом «Покер», обратный отсчёт плитками сплит-флэп</td><td>название 56 / 44 · плитки 40×54 / 30×42</td></tr>
+    <tr><td>Карточка «Ближайший турнир»</td><td>билет на «Бумаге»: перфорация пунктиром и два выреза перед нижней строкой; отсчёт крупными цифрами цвета «Текст на бумаге», единицы разделены тонкими линиями; свободные места — акцентом; кнопка тёмная, при наведении — акцент. Над заголовком «Лобби» — строка «открыто ежедневно» моно латунью с пульсирующей точкой</td><td>название 60 / 44 · цифры 76 / 56 · места 52 / 42</td></tr>
     <tr><td>Фильтр периода</td><td>сегмент без скруглений; активный — заливка «Бумага», текст «Фон»</td><td>высота 44 · Sofia Bold 20, КАПС</td></tr>
     <tr><td>Фильтр формата</td><td>чипы-обводки 1,5 px «Линии»; активный — обводка и текст «Покер»</td><td>высота 36 · Sofia Bold 17</td></tr>
-    <tr><td>Табло турниров</td><td>7 колонок: дата · турнир · формат · стек · места · статус · кнопки; на телефоне строка становится карточкой</td><td>дата 40 / 34 · название 28 / 26 · строка 20 сверху и снизу</td></tr>
-    <tr><td>Статусы</td><td>«запись идёт» — обводка светлым 40%; «последние места» — акцент; «идёт игра» — заливка «Покер» с мигающей точкой; «по рейтингу» — обводка «Покер»; «завершён» — серый, строка 50%</td><td>высота 30 · Sofia Bold 16, разрядка 8%</td></tr>
+    <tr><td>Табло турниров</td><td>без коробки: волосяные линии между строками, подсветка строки при наведении. 7 колонок: дата · турнир · формат · стек · свободно (число и тонкая полоса заполненности) · статус · кнопки; «Записаться» — обводка латунью, «Стол →» — текстовая ссылка; на планшете и телефоне строка становится карточкой</td><td>дата 40 / 34 · название 28 / 26 · строка 20 сверху и снизу</td></tr>
+    <tr><td>Статусы</td><td>точка и подпись моно, без плашек: «запись идёт» — светлая; «последние места» — акцент; «идёт игра» — латунь, точка мигает; «по рейтингу» — латунь, точка-кольцо; «завершён» — серый, строка 50%</td><td>IBM Plex Mono 12, разрядка 12% · точка 7</td></tr>
     <tr><td>Карточка стола</td><td>стол сверху: борт цветом «Плитки цифр», сукно — «Покер» 16% на «Фоне табло», пунктирная линия ставок, общие карты и банк в центре. Дилер в центре нижней стороны, 9 мест за бортом по часовой стрелке от его левой руки: занятое — круг «Бумага» с номером, перед ним две карты рубашкой и стопка фишек (ребро на 40% темнее, вставки по краю, кольцо на верхней); блайнды — 1 и 2 фишки за линией ставок; свободное — пунктир. Кнопка D — на сукне перед игроком</td><td>стол 320×160, место Ø 28, карта 14×20 · цифры 32</td></tr>
     <tr><td>Рейтинг</td><td>на «бумаге», пунктир 8 / 6 как в афише, первая тройка — цифры цветом «Покер»</td><td>место 44 / 34 · имя 28 / 22 · очки 34 / 28</td></tr>
     <tr><td>Модалка записи</td><td>билет как форма брони: вырезы по бокам, корешок с турниром, две обязательные галочки (18+ и согласие на данные)</td><td>скругление 14 · ширина до 860</td></tr>
@@ -1042,8 +1129,8 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
     <tr><th>Где</th><th>Что происходит</th><th>Время</th></tr>
     <tr><td>Первый экран</td><td>заголовок выезжает снизу; фото проявляется, как отпечаток, и медленно отъезжает</td><td>0,8 с · проявка 2,2 с · отъезд 16 с</td></tr>
     <tr><td>Бильярд 1979</td><td>год «отматывается» от текущего до 1979</td><td>1,6 с</td></tr>
-    <tr><td>Лобби</td><td>заголовок «Лобби» выезжает снизу; штамп «открыто до 02:00» штампуется</td><td>0,8 с · штамп 0,55 с</td></tr>
-    <tr><td>Чем заняться</td><td>плитки выходят по очереди, шар «8» закатывается слева с вращением</td><td>0,6 с, шаг 90 мс · шар 1,2 с</td></tr>
+    <tr><td>Лобби</td><td>заголовок «Лобби» выезжает снизу; точка «открыто» мягко пульсирует; полосы заполненности мест в табло растут слева</td><td>0,8 с · пульс 2,4 с · полоса 0,9 с</td></tr>
+    <tr><td>Чем заняться</td><td>строки карты клуба проявляются по очереди снизу; при наведении — сдвиг названия, линия и стрелка</td><td>0,7 с, шаг 100 мс · наведение 0,4–0,6 с</td></tr>
     <tr><td>Вопросы</td><td>«+» поворачивается в «×», ответ выезжает сверху</td><td>0,3 с · 0,4 с</td></tr>
     <tr><td>Ближайший турнир</td><td>цифры отсчёта и свободных мест перещёлкиваются, как на вокзальном табло; отсчёт обновляется раз в 15 с</td><td>85 мс на щелчок</td></tr>
     <tr><td>Табло турниров</td><td>строки выезжают слева по очереди — при загрузке и при каждом переключении фильтра</td><td>0,45 с, шаг 70 мс</td></tr>
@@ -1064,13 +1151,13 @@ try{ if(sessionStorage.getItem('sopranoMotion')!=='off') document.documentElemen
 
 <script>
 const P = {
-  1:{n:'1 · Красный штамп', c:['#0C0B0A','#F2E8D5','#14110D','#E8352B','#F2E8D5','#E8352B','#6F89FF','#8C857A','#2B2823','#151310','#22201B','#5E574C']},
+  1:{n:'1 · Красный штамп', c:['#0C0B0A','#F2E8D5','#14110D','#E8352B','#F2E8D5','#E8352B','#C9A464','#8C857A','#2B2823','#151310','#22201B','#5E574C']},
   2:{n:'2 · Бордо и латунь', c:['#140C0D','#EFE3CF','#1C1012','#C9973F','#140C0D','#8E2234','#D9A54A','#94867C','#2E2224','#1C1214','#2A1B1E','#6B5A50']},
   3:{n:'3 · Табачный зелёный', c:['#0F1A15','#EDE4CF','#13201A','#E8642C','#0F1A15','#E8642C','#7CC39C','#8B9A90','#24332B','#14221B','#1D2E25','#56645B']},
   4:{n:'4 · Ночной ультрамарин', c:['#0A0D1C','#ECE8DE','#0E1226','#FF5A36','#0A0D1C','#3A5BFF','#8EA2FF','#8A8FA8','#22273F','#10142A','#1A1F38','#555A73']},
   5:{n:'5 · Светлый (инверсия)', c:['#EFE6D2','#14110D','#F2E8D5','#D9301F','#F2E8D5','#D9301F','#2C4BD8','#7A7264','#CFC4AE','#E6DCC6','#D9CEB6','#B8AE9C']}
 };
-const R = ['Фон','Бумага / светлый текст','Текст на бумаге','Акцент (кнопки, штамп, даты)','Текст на кнопке акцента','Курсив на бумаге','Покер (2-й цвет)','Вторичный текст','Линии','Фон табло','Плитки цифр','Вторичный текст на бумаге'];
+const R = ['Фон','Бумага / светлый текст','Текст на бумаге','Акцент (кнопки, штамп, даты)','Текст на кнопке акцента','Курсив на бумаге','Латунь / покер (2-й цвет)','Вторичный текст','Линии','Фон табло','Плитки цифр','Вторичный текст на бумаге'];
 function setP(p){
   if(!P[p]) p='1';
   document.body.dataset.p=p;
@@ -1129,7 +1216,7 @@ function render(){
       <div class="t-name">${t.name}<span>${t.note}</span></div>
       <div class="t-fmt"><b>${FMT[t.fmt]}</b>${t.max===9?'1 стол':'2 стола'}</div>
       <div class="t-stack">${t.stack}<span>фишек</span></div>
-      <div class="t-seats"><div class="flap sm${free<=3&&can?' acc':' pk'}" data-free="${t.id}">${String(free).padStart(2,'0').split('').map(c=>`<b>${c}</b>`).join('')}</div><i>/${t.max}</i></div>
+      <div class="t-seats${free<=3&&can?' low':''}"><div class="sn"><b>${free}</b> из ${t.max}</div><div class="sbar"><i style="width:${Math.round(t.taken/t.max*100)}%"></i></div></div>
       <div class="t-status">${status(t)}</div>
       <div class="t-act">${can?`<button class="btn btn-poker" data-join="${t.id}">Записаться</button>`:''}${t.st!=='done'?`<a class="btn btn-ghost stl" href="#" title="Страница стола — в прототипе">Стол →</a>`:''}</div>
     </div>`;}).join('');
@@ -1351,7 +1438,7 @@ document.getElementById('tourBtn').onclick = async () => {
   goTo('#tour'); await wait(700); replay([...document.querySelectorAll('.trow')]); await wait(1800);
   goTo('#tables'); await wait(700); document.querySelectorAll('.mini').forEach(deal); await wait(3800);
   goTo('#rating'); await wait(700); countUp(); await wait(2000);
-  const cg = document.querySelector('.cgrid'); goTo('#club'); await wait(700); cg.classList.remove('in'); void cg.offsetWidth; cg.classList.add('in'); await wait(2000);
+  const cg = document.querySelector('.cmenu'); goTo('#club'); await wait(700); cg.classList.remove('in'); void cg.offsetWidth; cg.classList.add('in'); await wait(2000);
   goTo('#hall', 'center'); await wait(2000);
   goTo('#faq'); await wait(700); const d0 = document.querySelector('.qa details'); d0.open = false; await wait(200); d0.open = true; await wait(1400);
   goTo('#bform', 'center'); await wait(800);
